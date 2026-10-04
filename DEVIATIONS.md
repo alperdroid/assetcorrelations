@@ -221,6 +221,16 @@ Nothing else changed the methodology in README.md.
   short window in `tests/test_study2.py`) were mistakes in how the tests were built. They were
   made before the real run and changed no strategy code.
 
+## D12. Study 3 added (separate study; no effect on Studies 1 and 2)
+
+- Pre-registered in `PREREGISTRATION_STUDY3.md` (commit 00412ae) before any code was written or
+  any international return was examined. The code and tests were committed before the real run.
+- **New data:** Ken French regional 3-factor files (Developed ex US, Europe, Japan, Asia Pacific
+  ex Japan; monthly and daily; 1990-07 to 2026-08; from the approved Ken French library).
+- **Design change approved by the PI:** cash (T-bills) is allowed for H4a and H4b only.
+- The study is implemented in `study3.py`, with results in `results_study3/` and
+  `results/study3_findings.md`. No deviations from the pre-registration.
+
 ## Pending checks (from the first session; resolution noted)
 
 1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal

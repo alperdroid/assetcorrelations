@@ -114,6 +114,11 @@ Two headline decompositions:
 trend overlays, volatility-managed equity) over 1973-2026. Results: `results_study2/report.md`,
 summary in `results/study2_findings.md`.
 
+## Study 3 (trend with cash; international volatility-management test)
+
+`python study3.py` runs `PREREGISTRATION_STUDY3.md`. Results: `results_study3/report.md`, summary in
+`results/study3_findings.md`.
+
 ## Files
 
 `config.py` settings · `data.py` downloads and parsing · `regimes.py` signals ·

@@ -1,0 +1,61 @@
+variant,universe,strategy,Sharpe,control Sharpe,MaxDD,control MaxDD
+Primary,Developed ex US,H4a Trend + cash,0.7213239525574812,0.5891083961327401,-10.4%,-20.1%
+Primary,Developed ex US,"H4b Trend, cash fallback",0.6803686322550809,0.5891083961327401,-26.4%,-20.1%
+Primary,Developed ex US,H5 Vol-managed equity,0.5012078507144933,0.5891083961327401,-20.5%,-20.1%
+Primary,Europe,H4a Trend + cash,0.7557844165331887,0.6521142228655615,-9.7%,-21.5%
+Primary,Europe,"H4b Trend, cash fallback",0.7424983860741637,0.6521142228655615,-25.8%,-21.5%
+Primary,Europe,H5 Vol-managed equity,0.6385624523319972,0.6521142228655615,-20.6%,-21.5%
+Primary,Japan,H4a Trend + cash,0.689890070104043,0.4303727552438917,-9.3%,-21.3%
+Primary,Japan,"H4b Trend, cash fallback",0.6909907586063032,0.4303727552438917,-17.1%,-21.3%
+Primary,Japan,H5 Vol-managed equity,0.24972589689801153,0.4303727552438917,-29.8%,-21.3%
+Primary,Asia Pacific ex Japan,H4a Trend + cash,0.7017265575882843,0.6073266905138714,-11.1%,-22.6%
+Primary,Asia Pacific ex Japan,"H4b Trend, cash fallback",0.6526979341174114,0.6073266905138714,-26.2%,-22.6%
+Primary,Asia Pacific ex Japan,H5 Vol-managed equity,0.5505852404824584,0.6073266905138714,-21.6%,-22.6%
+Primary,"US (seen, exploratory)",H4a Trend + cash,0.8016905467135195,0.5871065311467641,-10.6%,-20.2%
+Primary,"US (seen, exploratory)","H4b Trend, cash fallback",0.694624558491568,0.5871065311467641,-24.5%,-20.2%
+Primary,"US (seen, exploratory)",H5 Vol-managed equity,0.5908003289849225,0.5871065311467641,-17.1%,-20.2%
+R1 trend 12-1,Developed ex US,H4a Trend + cash,0.6277493814605749,0.5891083961327401,-8.5%,-20.1%
+R1 trend 12-1,Developed ex US,"H4b Trend, cash fallback",0.6432077731868152,0.5891083961327401,-15.0%,-20.1%
+R1 trend 12-1,Developed ex US,H5 Vol-managed equity,0.5012078507144933,0.5891083961327401,-20.5%,-20.1%
+R1 trend 12-1,Europe,H4a Trend + cash,0.7227180058040155,0.6521142228655615,-8.0%,-21.5%
+R1 trend 12-1,Europe,"H4b Trend, cash fallback",0.761541473758987,0.6521142228655615,-15.6%,-21.5%
+R1 trend 12-1,Europe,H5 Vol-managed equity,0.6385624523319972,0.6521142228655615,-20.6%,-21.5%
+R1 trend 12-1,Japan,H4a Trend + cash,0.5399949515096825,0.4303727552438917,-9.3%,-21.3%
+R1 trend 12-1,Japan,"H4b Trend, cash fallback",0.5293074090813996,0.4303727552438917,-22.0%,-21.3%
+R1 trend 12-1,Japan,H5 Vol-managed equity,0.24972589689801153,0.4303727552438917,-29.8%,-21.3%
+R1 trend 12-1,Asia Pacific ex Japan,H4a Trend + cash,0.6097364283763056,0.6073266905138714,-8.8%,-22.6%
+R1 trend 12-1,Asia Pacific ex Japan,"H4b Trend, cash fallback",0.5891746924209672,0.6073266905138714,-22.1%,-22.6%
+R1 trend 12-1,Asia Pacific ex Japan,H5 Vol-managed equity,0.5505852404824584,0.6073266905138714,-21.6%,-22.6%
+R1 trend 12-1,"US (seen, exploratory)",H4a Trend + cash,0.7125601594038633,0.5871065311467641,-10.5%,-20.2%
+R1 trend 12-1,"US (seen, exploratory)","H4b Trend, cash fallback",0.6319627959991642,0.5871065311467641,-21.5%,-20.2%
+R1 trend 12-1,"US (seen, exploratory)",H5 Vol-managed equity,0.5908003289849225,0.5871065311467641,-17.1%,-20.2%
+R2 H5 uncapped,Developed ex US,H4a Trend + cash,0.7213239525574812,0.5891083961327401,-10.4%,-20.1%
+R2 H5 uncapped,Developed ex US,"H4b Trend, cash fallback",0.6803686322550809,0.5891083961327401,-26.4%,-20.1%
+R2 H5 uncapped,Developed ex US,H5 Vol-managed equity,0.4392941763670826,0.5891083961327401,-20.8%,-20.1%
+R2 H5 uncapped,Europe,H4a Trend + cash,0.7557844165331887,0.6521142228655615,-9.7%,-21.5%
+R2 H5 uncapped,Europe,"H4b Trend, cash fallback",0.7424983860741637,0.6521142228655615,-25.8%,-21.5%
+R2 H5 uncapped,Europe,H5 Vol-managed equity,0.566375418963866,0.6521142228655615,-20.6%,-21.5%
+R2 H5 uncapped,Japan,H4a Trend + cash,0.689890070104043,0.4303727552438917,-9.3%,-21.3%
+R2 H5 uncapped,Japan,"H4b Trend, cash fallback",0.6909907586063032,0.4303727552438917,-17.1%,-21.3%
+R2 H5 uncapped,Japan,H5 Vol-managed equity,0.1634304394657135,0.4303727552438917,-39.0%,-21.3%
+R2 H5 uncapped,Asia Pacific ex Japan,H4a Trend + cash,0.7017265575882843,0.6073266905138714,-11.1%,-22.6%
+R2 H5 uncapped,Asia Pacific ex Japan,"H4b Trend, cash fallback",0.6526979341174114,0.6073266905138714,-26.2%,-22.6%
+R2 H5 uncapped,Asia Pacific ex Japan,H5 Vol-managed equity,0.47868803911710317,0.6073266905138714,-25.5%,-22.6%
+R2 H5 uncapped,"US (seen, exploratory)",H4a Trend + cash,0.8016905467135195,0.5871065311467641,-10.6%,-20.2%
+R2 H5 uncapped,"US (seen, exploratory)","H4b Trend, cash fallback",0.694624558491568,0.5871065311467641,-24.5%,-20.2%
+R2 H5 uncapped,"US (seen, exploratory)",H5 Vol-managed equity,0.5339981124654871,0.5871065311467641,-15.7%,-20.2%
+R3 costs x2,Developed ex US,H4a Trend + cash,0.6937364390166949,0.5856188034677026,-11.0%,-20.1%
+R3 costs x2,Developed ex US,"H4b Trend, cash fallback",0.6414500752872987,0.5856188034677026,-27.4%,-20.1%
+R3 costs x2,Developed ex US,H5 Vol-managed equity,0.4646182470902769,0.5856188034677026,-20.7%,-20.1%
+R3 costs x2,Europe,H4a Trend + cash,0.728786165935868,0.6484832425656787,-10.2%,-21.6%
+R3 costs x2,Europe,"H4b Trend, cash fallback",0.7041989878799084,0.6484832425656787,-26.6%,-21.6%
+R3 costs x2,Europe,H5 Vol-managed equity,0.601805838340189,0.6484832425656787,-20.9%,-21.6%
+R3 costs x2,Japan,H4a Trend + cash,0.6637405257610713,0.4268877047399725,-9.5%,-21.3%
+R3 costs x2,Japan,"H4b Trend, cash fallback",0.6557662619779919,0.4268877047399725,-17.3%,-21.3%
+R3 costs x2,Japan,H5 Vol-managed equity,0.21539612123664026,0.4268877047399725,-30.8%,-21.3%
+R3 costs x2,Asia Pacific ex Japan,H4a Trend + cash,0.6767663525487708,0.603993573470648,-11.8%,-22.6%
+R3 costs x2,Asia Pacific ex Japan,"H4b Trend, cash fallback",0.6170066656240913,0.603993573470648,-27.6%,-22.6%
+R3 costs x2,Asia Pacific ex Japan,H5 Vol-managed equity,0.5181890767103055,0.603993573470648,-22.0%,-22.6%
+R3 costs x2,"US (seen, exploratory)",H4a Trend + cash,0.7836415824615474,0.5833914045073089,-10.7%,-20.3%
+R3 costs x2,"US (seen, exploratory)","H4b Trend, cash fallback",0.6714706013087561,0.5833914045073089,-25.4%,-20.3%
+R3 costs x2,"US (seen, exploratory)",H5 Vol-managed equity,0.5618669702785796,0.5833914045073089,-17.4%,-20.3%
