@@ -231,6 +231,15 @@ Nothing else changed the methodology in README.md.
 - The study is implemented in `study3.py`, with results in `results_study3/` and
   `results/study3_findings.md`. No deviations from the pre-registration.
 
+## D13. Study 4 added (robustness on seen data; no effect on earlier studies)
+
+- Pre-registered in `PREREGISTRATION_STUDY4.md` (commit 77004ff). The code was committed before
+  the run.
+- On the first run, `study4.py` crashed while formatting the stress-episode table. All
+  statistics had already been computed. Only the reshaping of that table was fixed; no
+  computation was changed. Results are in `results_study4/` and `results/study4_findings.md`.
+- The overall synthesis across Studies 1-4 is in `results/SYNTHESIS.md`.
+
 ## Pending checks (from the first session; resolution noted)
 
 1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal

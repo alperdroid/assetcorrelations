@@ -119,6 +119,11 @@ summary in `results/study2_findings.md`.
 `python study3.py` runs `PREREGISTRATION_STUDY3.md`. Results: `results_study3/report.md`, summary in
 `results/study3_findings.md`.
 
+## Study 4 and overall synthesis
+
+`python study4.py` runs `PREREGISTRATION_STUDY4.md` (H4a against cash-matched and volatility-matched static
+portfolios). The overall conclusions are in `results/SYNTHESIS.md`.
+
 ## Files
 
 `config.py` settings · `data.py` downloads and parsing · `regimes.py` signals ·

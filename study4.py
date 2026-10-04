@@ -94,10 +94,11 @@ def main():
     allshow["diff"] = [f"{d * 100:+.1f}pp" if s == "MaxDD" else f"{d:+.2f}" for d, s in zip(T["diff"], T.statistic)]
     rep += ["## All comparisons (H4a minus control; not Holm-corrected; MaxDD > 0 = H4a shallower)", "",
             md(allshow.set_index("universe")[["control", "statistic", "diff", "p_value"]]), ""]
-    e = pd.Series(eps).unstack(0)
-    e.columns = [f"{u.split(' (')[0]}: {s.split(' ')[0]}" for u, s in e.columns]
-    sel = [c for c in e.columns if c.split(": ")[1] in ("H4a", "C1")]
-    ep = e[sel].dropna(how="all")
+    cols = {}
+    for (u, en), ser in eps.items():
+        for strat in ("H4a Trend + cash", "C1 cash-matched static"):
+            cols.setdefault(f"{u.split(' (')[0]}: {strat.split(' ')[0]}", {})[en] = ser[strat]
+    ep = pd.DataFrame(cols).reindex(list(cfg.episodes)).dropna(how="all")
     ep.to_csv(out / "episodes.csv")
     rep += ["## Stress episodes, H4a vs C1 (cumulative return)", "", md(ep, pct=list(ep.columns)), ""]
     (out / "report.md").write_text("\n".join(rep), encoding="utf-8")
