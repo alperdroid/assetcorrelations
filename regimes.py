@@ -80,10 +80,30 @@ def confirm_switches(labels: pd.Series, k: int) -> pd.Series:
     return pd.Series(out, index=labels.index)
 
 
+RT_LAGS = {"cpi": 1, "unrate": 1, "philly": 0}
+LAG_KEY = {"CPI": "cpi", "UNRATE": "unrate", "PHILLY": "philly"}
+
+
+def unpublished_interp_months(interpolated: dict | None) -> list:
+    """Decision months whose real-time label would use an interpolated value before the next real
+    observation (which the interpolation relies on) was published. A value for month m with
+    publication lag L enters the label at decision month m+L; the next observation n becomes
+    usable at n+L. So decisions m+L ... n+L-1 would see the future and are left unlabelled."""
+    bad = set()
+    for col, gaps in (interpolated or {}).items():
+        lag = RT_LAGS[LAG_KEY[col]]
+        for m, n in gaps:
+            bad.update(pd.period_range(m + lag, n + lag - 1, freq="M"))
+    return sorted(bad)
+
+
 def build_regimes(macro: pd.DataFrame, daily: pd.DataFrame, window: int = 63, minp: int = 24,
-                  confirm: int = 1) -> pd.DataFrame:
+                  confirm: int = 1, interpolated: dict | None = None) -> pd.DataFrame:
     """Real-time labels (for trading) and oracle labels (perfect nowcast of next month)."""
-    rt = macro_scores(macro, {"cpi": 1, "unrate": 1, "philly": 0}, minp)
+    rt = macro_scores(macro, RT_LAGS, minp)
+    bad = [m for m in unpublished_interp_months(interpolated) if m in rt.index]
+    rt.loc[bad, ["growth_score", "infl_score"]] = np.nan
+    rt.loc[bad, "regime"] = None
     rt["regime_raw"] = rt["regime"]
     rt["regime"] = confirm_switches(rt["regime"], confirm)
     nowcast = macro_scores(macro, {"cpi": 0, "unrate": 0, "philly": 0}, minp)

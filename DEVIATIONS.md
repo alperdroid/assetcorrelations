@@ -4,13 +4,15 @@ Every change that alters (or could alter) results, every departure from the READ
 data substitution is listed here: what, why, and the effect on results. Entries are never
 deleted. If a later entry supersedes an earlier one, the later entry says so.
 
-Status as of 2026-10-04: **the real-data study has not been run yet.** FRED and the Bundesbank
-API are blocked by this environment's network policy (see D1 and D2), so no main or robustness
-results exist. Nothing below changed the methodology in README.md.
+Status (updated 2026-10-04, second session): network access to FRED and the Bundesbank was
+granted, all data downloaded, and the main and robustness runs completed. Result-altering
+entries: **D7** (October 2025 macro gap interpolated, at the PI's choice). D2 is a data
+substitution (World Bank average gold kept because the Bundesbank has no USD gold series).
+Nothing else changed the methodology in README.md.
 
 ---
 
-## D1. FRED unreachable, so the real-data study has not run (blocking, unresolved)
+## D1. FRED unreachable, so the real-data study has not run (RESOLVED, see D6)
 
 - **What:** every request to `fred.stlouisfed.org` fails with `ProxyError ... 403 Forbidden`.
   The four FRED inputs (DGS10, CPIAUCNS, GACDFSA066MSFRBPHI, UNRATE) could not be downloaded.
@@ -28,7 +30,21 @@ results exist. Nothing below changed the methodology in README.md.
 
 ## D2. Month-end gold (Phase 3) not obtained: World Bank monthly averages remain in use
 
-- **What:** `api.statistiken.bundesbank.de` is blocked by the same egress policy (403).
+- **Update after network access was granted (supersedes the "could not be run" part below):**
+  the API is reachable, but **BBEX3 contains no gold price in USD**. Queried:
+  - `https://api.statistiken.bundesbank.de/rest/data/BBEX3/.XAU.USD.EA..?detail=nodata`
+    (also with the `D.` and `M.` prefixes, and `..USD.EA..`): HTTP 404, which the API uses for
+    "no series matches the request".
+  - `https://api.statistiken.bundesbank.de/rest/data/BBEX3/.XAU....?detail=nodata` (any
+    XAU series): three series only, all the Frankfurt Stock Exchange fixing in DM per kg, which
+    ends in 1998: `A.XAU.DEM.EA.AC.C03`, `D.XAU.DEM.EA.AC.C01`, and
+    `M.XAU.DEM.EA.AC.C02` (a monthly average).
+  - The dataflow list (`/rest/metadata/dataflow/BBK`, 94 dataflows) has no other gold price
+    flow. `BBFI3` is the international investment position in fine troy ounces, which is a
+    quantity, not a price.
+  None of these is a usable USD month-end series for 1972-2026, so per the instructions the
+  study continues with the World Bank series. No override was written.
+- **Original entry:** `api.statistiken.bundesbank.de` was blocked by the same egress policy (403).
   `fetch_gold_bundesbank.py` was written to discover the BBEX3 series. It queries
   `BBEX3/.XAU.USD.EA..?detail=nodata`, prefers a daily London USD price, takes the last
   observation of each month, and rejects monthly averages. It could not be run, so **no series
@@ -84,9 +100,69 @@ results exist. Nothing below changed the methodology in README.md.
 - Max drawdown is path dependent and block resampling shortens long drawdowns. Drawdown p-values
   are therefore indicative only and will be reported that way.
 
-## Pending checks (run as soon as FRED is reachable; may create new entries)
+## D6. Downloader: custom User-Agent removed (no effect on results)
 
-1. **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal
+- **What:** `data._fetch` sent `User-Agent: Mozilla/5.0 (regime-study)`. Once the domain was
+  allowed, FRED still closed every connection that carried this header ("Remote end closed
+  connection without response"). Requests with the default `python-requests` User-Agent succeed
+  (tested 4 out of 4 each way). The header was removed, and the same change was made in
+  `fetch_gold_bundesbank.py`.
+- **Effect on results:** none, because it only changes how files are downloaded.
+
+## D7. October 2025 CPI and unemployment gap interpolated (changes results from 2025-11 on)
+
+- **What:** FRED has no value for 2025-10 in CPIAUCNS or UNRATE (the rows are blank). These
+  observations were never published because of the US federal government shutdown. All other
+  months are complete.
+- **Problem with the code as written (pandas 3.0.6):** the missing month propagates through
+  `pct_change(12)` and the 3- and 12-month rolling means. That left the real-time regime label
+  EMPTY for decision months 2025-11 to 2026-07 (9 months, covering returns from 2025-12 to
+  2026-08), and the regime strategies silently fell back to unconditional estimates. Under
+  pandas 2.x, `pct_change` would have forward-filled instead, so the behaviour depended on the
+  pandas version.
+- **Decision (made by the PI when asked, 2026-10-04):** interpolate October.
+  - CPI is interpolated log-linearly (324.461, between Sep 324.800 and Nov 324.122) and UNRATE
+    linearly (4.45, between 4.4 and 4.5).
+  - Only interior gaps are filled (`data.fill_internal_gaps`); the ragged edge at the end of the
+    sample is left alone.
+  - Look-ahead guard (`regimes.unpublished_interp_months`): the interpolated October value uses
+    November's figure. November's figure is published in December, so it is first usable at
+    decision month 2025-12. Decision month **2025-11** would therefore see unpublished data, and
+    its real-time label is left empty (scores NaN). For that one month the regime strategies use
+    unconditional estimates; with `--confirm 2` the previous regime is held. The oracle label is
+    allowed to use the interpolated values.
+- **Effect on results:**
+  - Real-time scores and labels up to decision month 2025-10 are bit-identical with and without
+    interpolation, verified on the real data.
+  - Labels from 2025-12 on now exist: Stagflation for 2025-12 and 2026-01, Goldilocks for
+    2026-02 and 2026-03, then Reflation from 2026-04.
+  - This only affects the last 9 out-of-sample months. Checked against `results_gap_asis`:
+    the monthly returns of every real-time strategy are identical through 2025-12 and first
+    differ in 2026-01. Oracle Tilt differs from 2025-10, as designed, because the oracle uses
+    the interpolated October values.
+  - Main-run regime value: +0.45 pp a year with interpolation, +0.52 pp without.
+  - The un-interpolated version is reported as the robustness run `results_gap_asis`
+    (`--no-interp`); see `results/robustness_summary.md` for both.
+- **Tests:** `tests/test_gap_interpolation.py` checks the log-linear fill, the
+  blocked-decision-month rule, and that labels after the gap ignore later-published data.
+
+## D8. Supplementary analyses beyond the specified outputs (no effect on specified results)
+
+- `results_main/significance_supplementary_static13.csv`: the same block bootstrap applied to
+  Regime Tilt vs Static 1/3, for the main run and the 2000-start run. Added because the research
+  question asks about static diversification, and Static 1/3 had the shallowest drawdown. It is
+  reported as supplementary, not as a pre-specified test.
+- `findings_tables.py` writes `results/findings_tables.md`, `results/regime_hedging_full.csv`
+  and `results/hypothesis_scorecard.csv`. These contain:
+  - down-market-month returns by regime;
+  - approximate iid Sharpe standard errors (Lo 2002);
+  - a README hypothesis scorecard. The "supported" rule (top 5 or bottom 5 of 14) was set
+    when the table was written, after the results had been seen. It is a summary device only.
+- `results_gap_asis`: robustness run without the D7 interpolation (`--no-interp`).
+
+## Pending checks (from the first session; resolution noted)
+
+1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal
    shutdown may have left gaps in CPIAUCNS and UNRATE. Under pandas 3.x (installed: 3.0.6),
    `pct_change` and the rolling means do not fill gaps. One missing month would make the inflation
    or growth score NaN for up to about 12 months, so the regime label becomes empty (and with
@@ -97,12 +173,14 @@ results exist. Nothing below changed the methodology in README.md.
 2. **Unpinned dependencies.** `requirements.txt` has lower bounds only. This run used numpy 2.4.6,
    pandas 3.0.6, scipy 1.17.1, scikit-learn 1.9.1, matplotlib 3.11.2 (Python 3.11.15).
 3. **Sharpe definition.** `perf_stats` divides mean excess return by the std of total (not excess)
-   returns. The difference is small but non-standard. I have not changed it, because changing it
-   would alter reported numbers. It is flagged here for your decision.
+   returns. The difference is small but non-standard. DECIDED (PI, 2026-10-04): keep as coded and
+   state the definition in the paper. Not changed.
 
 ## Data vintage
 
 - Ken French files: built from the 202608 CRSP database, downloaded 2026-10-04; returns run to 2026-08.
 - World Bank gold (datahub mirror `datasets/gold-prices`, `data/monthly.csv`), downloaded
   2026-10-04; runs to 2026-09. 1960 onward is the World Bank Pink Sheet (monthly averages).
+- FRED DGS10, CPIAUCNS, GACDFSA066MSFRBPHI and UNRATE (fredgraph.csv), downloaded 2026-10-04.
+  DGS10 runs to 2026-10-01, CPI to 2026-08, Philly Fed and UNRATE to 2026-09.
 - Raw files are committed in `data/raw/`, so the exact vintage can be reproduced.

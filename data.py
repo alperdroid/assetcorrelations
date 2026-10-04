@@ -41,7 +41,7 @@ def _fetch(url: str, path: Path, refresh: bool) -> bytes:
         return path.read_bytes()
     import requests  # imported lazily so offline/synthetic runs don't need it
     log.info("Downloading %s", url)
-    r = requests.get(url, timeout=120, headers={"User-Agent": "Mozilla/5.0 (regime-study)"})
+    r = requests.get(url, timeout=120)  # default UA: FRED drops connections with a custom UA
     r.raise_for_status()
     path.write_bytes(r.content)
     return r.content
@@ -158,8 +158,30 @@ def load_raw(raw_dir: Path, industries: int = 12, refresh: bool = False, use_gol
     return raw
 
 
-def build_panels(raw: dict) -> dict:
-    """Return dict with monthly returns, daily returns and monthly macro data (PeriodIndex)."""
+# Internal gaps in the macro series (e.g. October 2025 CPI and UNRATE, never published because of
+# the US government shutdown) are interpolated: CPI log-linearly, the others linearly. Only gaps
+# between two observations are filled; the ragged edge at the end is left missing.
+INTERP_LOG = {"CPI": True, "PHILLY": False, "UNRATE": False}
+
+
+def fill_internal_gaps(s: pd.Series, log_scale: bool) -> tuple[pd.Series, list]:
+    """Interpolate interior NaNs. Returns the filled series and [(missing month, next observed month)]."""
+    x = np.log(s) if log_scale else s
+    filled = x.interpolate(method="linear", limit_area="inside")
+    filled = np.exp(filled) if log_scale else filled
+    gaps = []
+    obs = s.dropna().index
+    for m in s.index[s.isna() & filled.notna()]:
+        gaps.append((m, obs[obs > m][0]))
+    return filled, gaps
+
+
+def build_panels(raw: dict, interpolate_gaps: bool = True) -> dict:
+    """Return dict with monthly returns, daily returns and monthly macro data (PeriodIndex).
+
+    `interpolated` maps each macro column to [(filled month, next observed month)]; regimes.py uses
+    it to blank real-time labels that would otherwise rely on a value not yet published.
+    """
     ind = raw[raw["ind_key"]]
     ff_m, ff_d = raw["ff3_m"], raw["ff3_d"]
 
@@ -190,5 +212,12 @@ def build_panels(raw: dict) -> dict:
         "Y10": y_m,
     })
     macro = macro.reindex(pd.period_range(macro.index.min(), macro.index.max(), freq="M"))
-    return {"returns": rets, "daily": daily, "macro": macro,
+    interpolated = {}
+    if interpolate_gaps:
+        for col, log_scale in INTERP_LOG.items():
+            macro[col], gaps = fill_internal_gaps(macro[col], log_scale)
+            if gaps:
+                log.warning("Interpolated %s for %s", col, ", ".join(str(m) for m, _ in gaps))
+                interpolated[col] = gaps
+    return {"returns": rets, "daily": daily, "macro": macro, "interpolated": interpolated,
             "industries": list(ind.columns), "gold_source": raw.get("gold_source", "")}

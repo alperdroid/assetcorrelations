@@ -1,0 +1,5 @@
+regime,months_pre,months_post,rank_corr_sharpe
+Goldilocks (G+ I-),66,123,0.37857142857142856
+Reflation (G+ I+),56,122,0.014285714285714282
+Stagflation (G- I+),47,94,0.28928571428571426
+Disinflationary slowdown (G- I-),47,101,-0.22142857142857136

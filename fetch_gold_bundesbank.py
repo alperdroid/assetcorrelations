@@ -31,7 +31,7 @@ import requests
 ROOT = Path(__file__).resolve().parent
 BASE = "https://api.statistiken.bundesbank.de/rest/data/BBEX3/"
 XML = "application/vnd.sdmx.genericdata+xml;version=2.1"
-HEAD = {"Accept": XML, "User-Agent": "Mozilla/5.0 (regime-study)"}
+HEAD = {"Accept": XML}
 
 
 def _local(tag: str) -> str:
@@ -93,6 +93,8 @@ def title(s: dict) -> str:
 def discover() -> tuple[list[dict], str]:
     url = BASE + ".XAU.USD.EA..?detail=nodata"
     r = requests.get(url, headers=HEAD, timeout=120)
+    if r.status_code == 404:  # the API answers 404 when no series matches the key
+        return [], url
     r.raise_for_status()
     return parse_series(r.content), url
 
@@ -125,6 +127,9 @@ def main():
         sys.exit(f"Bundesbank API not reachable or query failed: {e}\n"
                  "Continue with the World Bank monthly-average series (no override written).")
     print(f"Discovery query: {disc_url}\nFound {len(series)} series:")
+    if not series and not args.key:
+        sys.exit("No BBEX3 series matches CURRENCY=XAU, PARTNER=USD, SERIES_TYPE=EA. "
+                 "Continue with the World Bank monthly-average series (no override written).")
     for s in series:
         print(f"  {key_string(s['key']):35s}  {title(s)}")
     if args.list:

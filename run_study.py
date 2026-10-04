@@ -34,6 +34,8 @@ def main():
     p.add_argument("--cost-mult", type=float, default=1.0, help="multiply all transaction costs")
     p.add_argument("--gold-avg", action="store_true",
                    help="ignore data/gold_override.csv and use World Bank monthly-average gold")
+    p.add_argument("--no-interp", action="store_true",
+                   help="do not interpolate internal macro gaps (e.g. Oct 2025 CPI/UNRATE)")
     p.add_argument("--bootstrap", type=int, default=5000, help="block-bootstrap resamples (0 = skip)")
     p.add_argument("--out", default="results")
     args = p.parse_args()
@@ -64,13 +66,13 @@ def main():
 
     raw = load_raw(raw_dir, cfg.industries, refresh=args.refresh and not args.synthetic,
                    use_gold_override=not args.gold_avg)
-    panels = build_panels(raw)
+    panels = build_panels(raw, interpolate_gaps=not args.no_interp)
     rets, inds = panels["returns"], panels["industries"]
     rets = rets.loc[cfg.sample_start:]
     logging.info("Return panel %s to %s, %d assets", rets.index[0], rets.index[-1], len(inds) + 2)
 
     regimes = build_regimes(panels["macro"], panels["daily"], cfg.corr_window_days,
-                            cfg.zscore_min_periods, cfg.confirm_months)
+                            cfg.zscore_min_periods, cfg.confirm_months, panels["interpolated"])
     regimes.to_csv(out / "regimes.csv")
     assets = inds + ["UST10", "GOLD", "MKT"]
 
@@ -118,7 +120,9 @@ def main():
                   "sample_start": str(rets.index[0]), "sample_end": str(rets.index[-1]),
                   "oos_start": cfg.oos_start, "industries": cfg.industries,
                   "confirm_months": cfg.confirm_months, "cost_bps": str(cfg.cost_bps),
-                  "gold_source": panels["gold_source"]}}).to_csv(out / "headline.csv")
+                  "gold_source": panels["gold_source"],
+                  "interpolated": "; ".join(f"{k}: {', '.join(str(m) for m, _ in v)}"
+                                            for k, v in panels["interpolated"].items()) or "none"}}).to_csv(out / "headline.csv")
     rf.loc[port.index].to_csv(out / "rf.csv")
 
     if args.bootstrap > 0:

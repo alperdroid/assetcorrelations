@@ -19,6 +19,7 @@ RUNS = {
     "results_oos2000": "OOS start 2000-01",
     "results_start1982": "Sample 1982-, OOS 2000-01",
     "results_costx2": "Transaction costs x2",
+    "results_gap_asis": "Oct-2025 gap not interpolated",
 }
 STRATS = ["Regime Tilt", "Uncond. Tilt", "Regime ERC", "Uncond. ERC", "Oracle Tilt", "60/40", "Static 1/3"]
 

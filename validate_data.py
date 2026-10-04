@@ -262,10 +262,12 @@ def main():
         for k, sid in D.FRED_SERIES.items():
             f = RAW / f"fred_{sid}.csv"
             if f.exists():
-                df = pd.read_csv(f)
-                raw_fred[sid] = int((df.iloc[:, 1].astype(str).str.strip() == ".").sum())
+                df = pd.read_csv(f, dtype=str, keep_default_na=False)
+                v = df.iloc[:, 1].str.strip()
+                blank = df.loc[v.isin([".", ""]), df.columns[0]]
+                raw_fred[sid] = f"{len(blank)}" + (f" ({', '.join(blank.str[:7])})" if 0 < len(blank) <= 5 else "")
         if raw_fred:
-            md += ["FRED rows marked '.' (no value) in the raw files: "
+            md += ["FRED rows with no value ('.' or blank) in the raw files (for DGS10 these are market holidays): "
                    + ", ".join(f"{k}: {v}" for k, v in raw_fred.items()), ""]
 
     # ---- 3. known annual returns
