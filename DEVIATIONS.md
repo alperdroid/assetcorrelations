@@ -253,6 +253,17 @@ Nothing else changed the methodology in README.md.
 - Outputs: `results/sector_deepdive.md`, `results/sector_findings.md`, `results/sector_*.csv`,
   `results/sector_charts/`.
 
+## D15. Study 5 added: forecasting horse race (no effect on Studies 1-4)
+
+- Pre-registered in `PREREGISTRATION_STUDY5.md` (commit 2cfa63a). Code and leakage tests were
+  committed before the run (2283a42). New FRED inputs: BAA and AAA corporate bond yields (for the
+  credit spread).
+- **Deviation:** the gold 1-month forecast that passed is excluded from the site, as an
+  averaging artefact (see the pre-registration's deviation log). Results:
+  `results_study5/`, `results/study5_findings.md`.
+- The site (`site/`) now shows the horse race and offers volatility conditioning based on the
+  passing HAR forecasts.
+
 ## Pending checks (from the first session; resolution noted)
 
 1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal

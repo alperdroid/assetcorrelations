@@ -172,4 +172,17 @@ Same backtest engine, costs and bootstrap as Studies 2-4.
 
 ## Deviations from this plan
 
-(none yet)
+- **2026-10-04, after results.** The 1-month gold return forecast (elastic net) passed family R
+  but is **not used by the site**. An exploratory diagnostic shows the predictability comes from
+  the World Bank gold series being a monthly average:
+  - an AR(1) model on gold's own last month has out-of-sample R² +2.55%, against +1.66% for the
+    elastic net;
+  - stocks rebuilt on monthly averages show the same lag-1 autocorrelation (0.24, against 0.03
+    at month-end).
+  The effect is not tradable. The test result is reported unchanged. See
+  `results/study5_findings.md` and DEVIATIONS D15.
+- **Implementation details not specified above:**
+  - missing real-time features are forward-filled;
+  - the earliest cross-validation block's stage-1 probabilities are set to that block's class
+    frequencies;
+  - persistence log loss uses Laplace-smoothed transition frequencies.

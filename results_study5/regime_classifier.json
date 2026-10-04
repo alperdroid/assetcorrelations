@@ -1,0 +1,10 @@
+{
+  "months": 438,
+  "accuracy_stage1": 0.769406392694064,
+  "accuracy_persist": 0.771689497716895,
+  "logloss_stage1": 0.7131145167461538,
+  "logloss_persist": 0.7358729349079264,
+  "mcnemar_b_stage1_only_right": 5,
+  "mcnemar_c_persist_only_right": 6,
+  "mcnemar_p": 1.0
+}

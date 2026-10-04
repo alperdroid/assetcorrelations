@@ -67,6 +67,9 @@ if (s5 / "scores.csv").exists():
             cond["vol"][lrv_hist[r["target"]]] = round(float(np.sqrt(fc / np.exp(hist).mean())), 4)
         if r["family"] == "R" and r["target"].startswith("ret1_") and r["pass_model"]:
             a = r["target"].split("_")[1]
+            if a == "GOLD":   # deviation (PREREGISTRATION_STUDY5 / DEVIATIONS D15): averaging artefact, not tradable
+                r["note"] = "Passes, but an artefact of monthly-average gold prices; not used"
+                continue
             cond["mean"][a] = round(float(cur[r["target"]][r["pass_model"]]) + cur["rf_annual"] / 12, 5)
     ya = sc[(sc.model == "yield_anchor")]
     if len(ya) and bool(ya.iloc[0].holm_reject_5pct) and ya.iloc[0].r2_os > 0:

@@ -403,6 +403,7 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: .8rem; border
         <div class="chart-head"><h3>What the models can and cannot forecast</h3><span class="muted" style="font-size:.8rem" id="modelsSub"></span></div>
         <p class="muted" style="font-size:.88rem;max-width:75ch;margin-bottom:12px">Study 5 pitted seven forecasting approaches against simple benchmarks, month by month since 1990, using only data available at the time. Bars show each model's out-of-sample R²: positive means it beat the benchmark (historical average for returns, last month's value for risk). A target passes only if a model beats the benchmark after correcting for the number of tests.</p>
         <div class="mtable" id="mtable"></div>
+        <p class="note" style="margin-top:10px">Gold's one-month "pass" comes from the price series, not the market: World Bank gold prices are monthly averages, which makes each month's change partly predictable from the last (a model using only gold's previous month did even better). The effect cannot be traded, so the forecast does not use it.</p>
         <div class="cards" id="mcards" style="margin-top:14px"></div>
       </div>
     </div>
@@ -823,7 +824,7 @@ function renderModels() {
   const all = s5.rows.flatMap(r => Object.values(r.models)); const M = Math.max(0.05, ...all.map(Math.abs));
   const bar = (m, v) => { const w = Math.min(50, Math.abs(v) / M * 50); return `<div class="mbar" title="${MNAME[m] || m}: R² ${(v * 100).toFixed(2)}%"><span class="z"></span><span class="f" style="${v >= 0 ? `left:50%` : `left:${50 - w}%`};width:${w}%;background:${v >= 0 ? 'var(--pos)' : 'var(--neg)'};opacity:.75"></span></div>`; };
   const head = `<div class="mrow h"><span>Target</span><span>Each model's R² vs benchmark (hover for name; centre line = 0)</span><span>Verdict</span></div>`;
-  $('mtable').innerHTML = head + s5.rows.map(r => `<div class="mrow"><span>${r.label}<br><span class="muted mono" style="font-size:.74rem">best: ${MNAME[r.best] || r.best} ${(r.best_r2 * 100).toFixed(2)}%</span></span><span class="mbars">${Object.entries(r.models).map(([m, v]) => bar(m, v)).join('')}</span><span class="pill ${r.pass_model ? 'ok' : 'no'}">${r.pass_model ? `Passes: ${MNAME[r.pass_model] || r.pass_model}` : 'No model beats benchmark'}</span></div>`).join('');
+  $('mtable').innerHTML = head + s5.rows.map(r => `<div class="mrow"><span>${r.label}<br><span class="muted mono" style="font-size:.74rem">best: ${MNAME[r.best] || r.best} ${(r.best_r2 * 100).toFixed(2)}%</span></span><span class="mbars">${Object.entries(r.models).map(([m, v]) => bar(m, v)).join('')}</span><span class="pill ${r.pass_model && !r.note ? 'ok' : 'no'}" ${r.note ? `title="${r.note}"` : ''}>${r.note ? 'Artefact: not used' : r.pass_model ? `Passes: ${MNAME[r.pass_model] || r.pass_model}` : 'No model beats benchmark'}</span></div>`).join('');
   const rg = s5.regime, pr = s5.regime_probs;
   const h2hAny = s5.h2h.some(h => h.p < 0.05 && h.r2 > 0);
   const econ = s5.econ;
