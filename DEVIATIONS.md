@@ -240,6 +240,19 @@ Nothing else changed the methodology in README.md.
   computation was changed. Results are in `results_study4/` and `results/study4_findings.md`.
 - The overall synthesis across Studies 1-4 is in `results/SYNTHESIS.md`.
 
+## D14. Sector deep dive (descriptive; no effect on any reported result)
+
+- The PI noted that the sector dimension was under-reported. `sector_analysis.py` adds:
+  - sector risk profiles by era;
+  - sector-bond and sector-gold correlations by decade;
+  - sector returns in the stress episodes;
+  - the sector-level regime map;
+  - an attribution of Study 1's Regime Tilt.
+- The attribution bootstraps are exploratory decompositions of an already reported result, not
+  pre-registered tests.
+- Outputs: `results/sector_deepdive.md`, `results/sector_findings.md`, `results/sector_*.csv`,
+  `results/sector_charts/`.
+
 ## Pending checks (from the first session; resolution noted)
 
 1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal

@@ -1,0 +1,5 @@
+regime,rank corr (sectors only),top 3 sectors 1972-89,top 3 sectors 1990-,bottom 3 sectors 1972-89,bottom 3 sectors 1990-
+Goldilocks,-0.06993006993006995,"Telcm, NoDur, Utils","Hlth, Money, Shops","Enrgy, BusEq, Other","Durbl, Other, Chems"
+Reflation,0.04895104895104895,"Telcm, Hlth, Enrgy","BusEq, Hlth, Utils","Durbl, Utils, BusEq","Durbl, Shops, Other"
+Stagflation,0.0979020979020979,"Enrgy, Other, Chems","Utils, NoDur, Hlth","BusEq, Durbl, Shops","Durbl, Telcm, BusEq"
+Disinflationary slowdown,-0.055944055944055944,"Utils, NoDur, Shops","Durbl, Shops, BusEq","Hlth, BusEq, Money","Utils, Enrgy, Hlth"

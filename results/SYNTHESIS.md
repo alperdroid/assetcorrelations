@@ -21,7 +21,7 @@ cash, turns out to be mostly the effect of holding less risk.
 | 3 | H4a trend, failing sleeve to cash | 4 regions + US | Not supported (Holm) | Max DD about -10% vs -20% everywhere (correlated evidence) |
 | 4 | Is H4a timing or just cash? | Same as Study 3 | Not supported | About 8 of the 9.7 pp drawdown gain comes from cash; timing +1.7 pp (p = 0.61) |
 
-## Five conclusions
+## Conclusions
 
 1. **Static diversification across equities, Treasuries and gold is a hard benchmark.** Holding
    1/3 each, rebalanced monthly, had a max drawdown of -20% since 1973 and -16% since 1990. That
@@ -41,6 +41,22 @@ cash, turns out to be mostly the effect of holding less risk.
    - Timing adds a small, consistently signed edge in slow bear markets (2000-02, 2008, 2022), but
      it is not statistically established.
 
+## Sector findings (`results/sector_findings.md`)
+
+6. **Sectors' defensiveness is persistent; their regime-specific returns are not.**
+   - Utilities, Staples and Health beat the market in 8-9 of 10 crises, and Durables, Tech and
+     Financials were usually among the worst. Down-capture rankings correlate 0.69 across eras.
+   - Which sector *earns most* in a regime reshuffles completely between eras (rank correlations
+     -0.07 to 0.10). That is why sector rotation by macro regime does not work.
+7. **Defensive sectors soften crashes but do not hedge them.** Even Utilities lost 42% in 1973-74
+   and 38% in the GFC. Treasuries were positive in 9 of 10 episodes and gold in 7 of 10.
+8. **The bond hedge failed for 11 of 12 sectors in 2020-26.** Energy is the exception (and +70% in
+   2022), but it was the worst sector in the 2020 crash. Utilities behaves like a bond proxy (positive bond
+   correlation in five of six decades).
+9. **Study 1's sector selection added +0.78 pp a year gross (p = 0.01), but this is fragile.** It is
+   +0.29 pp (p = 0.12) before 2020, and in 2020-26 Durables alone contributed 2.11 of 2.98 pp. Cutting
+   equity in Reflation and Stagflation cost as much (-0.78 pp).
+
 ## Practical implication (cautious)
 
 For a long-only investor worried that bonds no longer hedge stocks, the evidence here supports
@@ -49,6 +65,9 @@ two things:
 - **deciding the overall risk level directly**, by holding cash.
 
 It does not support timing between hedges with macro, correlation, volatility or trend signals.
+Within equities, a tilt towards persistently defensive sectors (Utilities, Staples, Health)
+lowers equity risk, but it does not replace Treasuries or gold. Regime-based sector rotation is not
+supported.
 A trend-into-cash rule is defensible as a way to cut risk during prolonged declines. Its benefit
 over simply holding the same cash is unproven.
 
@@ -74,5 +93,6 @@ over simply holding the same cash is unproven.
 ## Where to read more
 
 - `results/findings_draft.md`: Study 1.
+- `results/sector_findings.md`: the sector dimension; full tables in `results/sector_deepdive.md`.
 - `results/study2_findings.md`, `results/study3_findings.md`, `results/study4_findings.md`.
 - Full tables: `results_study*/report.md`.
