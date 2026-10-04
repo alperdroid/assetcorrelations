@@ -29,6 +29,8 @@ KF_FILES = {
     "ind17": "17_Industry_Portfolios_CSV.zip",
     "ff3_m": "F-F_Research_Data_Factors_CSV.zip",
     "ff3_d": "F-F_Research_Data_Factors_daily_CSV.zip",
+    "ind12_d": "12_Industry_Portfolios_daily_CSV.zip",
+    "ind17_d": "17_Industry_Portfolios_daily_CSV.zip",
 }
 FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={}"
 FRED_SERIES = {"DGS10": "DGS10", "CPI": "CPIAUCNS", "PHILLY": "GACDFSA066MSFRBPHI", "UNRATE": "UNRATE"}
@@ -137,11 +139,13 @@ def _to_monthly_period(s: pd.Series, how: str = "last") -> pd.Series:
     return g.last() if how == "last" else g.mean()
 
 
-def load_raw(raw_dir: Path, industries: int = 12, refresh: bool = False, use_gold_override: bool = True) -> dict:
+def load_raw(raw_dir: Path, industries: int = 12, refresh: bool = False, use_gold_override: bool = True,
+             avg_prices: bool = False) -> dict:
     raw_dir.mkdir(parents=True, exist_ok=True)
     ind_key = f"ind{industries}"
     raw = {}
-    for key in (ind_key, "ff3_m", "ff3_d"):
+    keys = (ind_key, "ff3_m", "ff3_d") + ((f"{ind_key}_d",) if avg_prices else ())
+    for key in keys:
         fn = KF_FILES[key]
         raw[key] = _read_kf_zip(_fetch(KF_BASE + fn, raw_dir / fn, refresh))
     for name, sid in FRED_SERIES.items():
@@ -176,7 +180,22 @@ def fill_internal_gaps(s: pd.Series, log_scale: bool) -> tuple[pd.Series, list]:
     return filled, gaps
 
 
-def build_panels(raw: dict, interpolate_gaps: bool = True) -> dict:
+def avg_price_returns(daily: pd.DataFrame | pd.Series) -> pd.DataFrame | pd.Series:
+    """Monthly returns between monthly AVERAGE price levels, built from daily returns.
+
+    Robustness variant only: puts every asset on the same basis as the World Bank gold series
+    (monthly averages). A trailing month whose data stop more than 3 days before month end is dropped.
+    """
+    level = (1 + daily.fillna(0.0)).cumprod()
+    per = level.index.to_period("M")
+    avg = level.groupby(per).mean()
+    last_day = pd.Series(level.index, index=level.index).groupby(per).max()
+    if last_day.iloc[-1] < last_day.index[-1].end_time.normalize() - pd.Timedelta(days=3):
+        avg = avg.iloc[:-1]
+    return avg.pct_change().iloc[1:]
+
+
+def build_panels(raw: dict, interpolate_gaps: bool = True, avg_prices: bool = False) -> dict:
     """Return dict with monthly returns, daily returns and monthly macro data (PeriodIndex).
 
     `interpolated` maps each macro column to [(filled month, next observed month)]; regimes.py uses
@@ -201,6 +220,13 @@ def build_panels(raw: dict, interpolate_gaps: bool = True) -> dict:
     rets["RF"] = ff_m["RF"]
     rets["UST10"] = bond_m
     rets["GOLD"] = gold_m.pct_change()
+    if avg_prices:  # robustness: all assets on monthly-average prices, like the gold series
+        ind_avg = avg_price_returns(raw[raw["ind_key"] + "_d"])
+        rets = ind_avg.copy()
+        rets["MKT"] = avg_price_returns(ff_d["Mkt-RF"] + ff_d["RF"])
+        rets["RF"] = ff_m["RF"]
+        rets["UST10"] = avg_price_returns(bond_d)
+        rets["GOLD"] = gold_m.pct_change()
     rets = rets.dropna()
 
     daily = pd.DataFrame({"MKT": ff_d["Mkt-RF"] + ff_d["RF"], "UST10": bond_d}).dropna()

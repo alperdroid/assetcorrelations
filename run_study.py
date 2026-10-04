@@ -36,6 +36,8 @@ def main():
                    help="ignore data/gold_override.csv and use World Bank monthly-average gold")
     p.add_argument("--no-interp", action="store_true",
                    help="do not interpolate internal macro gaps (e.g. Oct 2025 CPI/UNRATE)")
+    p.add_argument("--avg-prices", action="store_true",
+                   help="robustness: build ALL asset returns from monthly-average prices (like the gold series)")
     p.add_argument("--bootstrap", type=int, default=5000, help="block-bootstrap resamples (0 = skip)")
     p.add_argument("--out", default="results")
     args = p.parse_args()
@@ -65,8 +67,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
 
     raw = load_raw(raw_dir, cfg.industries, refresh=args.refresh and not args.synthetic,
-                   use_gold_override=not args.gold_avg)
-    panels = build_panels(raw, interpolate_gaps=not args.no_interp)
+                   use_gold_override=not args.gold_avg, avg_prices=args.avg_prices)
+    panels = build_panels(raw, interpolate_gaps=not args.no_interp, avg_prices=args.avg_prices)
     rets, inds = panels["returns"], panels["industries"]
     rets = rets.loc[cfg.sample_start:]
     logging.info("Return panel %s to %s, %d assets", rets.index[0], rets.index[-1], len(inds) + 2)
@@ -121,6 +123,7 @@ def main():
                   "oos_start": cfg.oos_start, "industries": cfg.industries,
                   "confirm_months": cfg.confirm_months, "cost_bps": str(cfg.cost_bps),
                   "gold_source": panels["gold_source"],
+                  "price_basis": "monthly averages (all assets)" if args.avg_prices else "month-end (gold: average)",
                   "interpolated": "; ".join(f"{k}: {', '.join(str(m) for m, _ in v)}"
                                             for k, v in panels["interpolated"].items()) or "none"}}).to_csv(out / "headline.csv")
     rf.loc[port.index].to_csv(out / "rf.csv")
@@ -135,7 +138,8 @@ def main():
                    "Regime Tilt: weights over time")
 
     A.write_report(out / "summary.md", {
-        "data_label": label + f"; regime confirmation = {cfg.confirm_months} month(s)", "sample": f"{rets.index[0]} to {rets.index[-1]}", "oos": cfg.oos_start,
+        "data_label": label + f"; regime confirmation = {cfg.confirm_months} month(s)"
+                      + ("; ALL asset returns from monthly-average prices" if args.avg_prices else ""), "sample": f"{rets.index[0]} to {rets.index[-1]}", "oos": cfg.oos_start,
         "gold_source": panels["gold_source"], "freq": freq, "summary": summary,
         "regime_value": regime_value, "detection_cost": detection_cost,
         "episodes_strat": ep_strat, "episodes_assets": ep_assets, "stability": stab, "robust": robust,

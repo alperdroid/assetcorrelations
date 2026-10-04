@@ -62,10 +62,13 @@ def regime_stats(rets, lab, assets):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--run", default="results_main")
+    p.add_argument("--avg-prices", action="store_true", help="returns from monthly-average prices (match --avg-prices runs)")
+    p.add_argument("--out", default="results/findings_tables.md")
+    p.add_argument("--csv-prefix", default="")
     args = p.parse_args()
     run = ROOT / args.run
     cfg = Config()
-    panels = build_panels(load_raw(ROOT / "data" / "raw", 12))
+    panels = build_panels(load_raw(ROOT / "data" / "raw", 12, avg_prices=args.avg_prices), avg_prices=args.avg_prices)
     rets = panels["returns"].loc[cfg.sample_start:]
     inds = panels["industries"]
     regimes = pd.read_csv(run / "regimes.csv", index_col=0)
@@ -73,12 +76,12 @@ def main():
     lab = regimes["regime"].shift(1).reindex(rets.index)
     assets = inds + ["UST10", "GOLD"]
     out = ["# Supporting tables for the findings draft", "",
-           f"Inputs: {args.run}, returns {rets.index[0]} to {rets.index[-1]}. Labels are real-time labels "
+           f"Inputs: {args.run}{' (ALL assets on monthly-average prices)' if args.avg_prices else ''}, returns {rets.index[0]} to {rets.index[-1]}. Labels are real-time labels "
            "known at the end of month t-1, paired with returns in month t.", ""]
 
     # ---- 1. hedging by regime (full sample, descriptive)
     st = regime_stats(rets, lab, assets + ["MKT"])
-    st.to_csv(ROOT / "results" / "regime_hedging_full.csv", index=False)
+    st.to_csv(ROOT / "results" / f"{args.csv_prefix}regime_hedging_full.csv", index=False)
     out += ["## 1. Hedging by regime, 1972-latest (descriptive, in-sample)", "",
             "Average monthly return in months when the US market fell (down-market months), "
             "with the market's own average in the last row. Higher = better hedge.", ""]
@@ -116,7 +119,7 @@ def main():
                                               (role == "expected loser" and ok >= len(assets) - 4) else "not supported")
                 rows.append(row)
     sc = pd.DataFrame(rows)
-    sc.to_csv(ROOT / "results" / "hypothesis_scorecard.csv", index=False)
+    sc.to_csv(ROOT / "results" / f"{args.csv_prefix}hypothesis_scorecard.csv", index=False)
     out += ["## 2. Hypothesis scorecard (README table)", "",
             f"Rank of each asset's Sharpe ratio among the {len(assets)} tradable assets within the regime "
             "(1 = best). 'Supported' = expected winner in the top 5, or expected loser in the bottom 5, "
@@ -155,7 +158,7 @@ def main():
     tab = (g.mean() * 12 * 100).round(1)
     tab["months"] = g.size()
     out += ["## 4. Out-of-sample strategy returns by real-time regime (annualised mean, %)", "", md(tab), ""]
-    (ROOT / "results" / "findings_tables.md").write_text("\n".join(out), encoding="utf-8")
+    (ROOT / args.out).write_text("\n".join(out), encoding="utf-8")
     print("\n".join(out))
 
 

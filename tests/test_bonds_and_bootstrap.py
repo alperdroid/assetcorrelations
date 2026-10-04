@@ -70,3 +70,16 @@ def test_bootstrap_identical_series_not_significant_and_shift_is():
 
 def test_max_drawdown():
     assert max_drawdown(np.array([0.1, -0.5, 0.2])) == pytest.approx(-0.5)
+
+
+def test_avg_price_returns_are_ratios_of_monthly_average_levels():
+    from data import avg_price_returns
+    idx = pd.bdate_range("2020-01-01", "2020-03-31")
+    r = pd.Series(0.001, index=idx)
+    out = avg_price_returns(r)
+    level = (1 + r).cumprod()
+    avg = level.groupby(level.index.to_period("M")).mean()
+    np.testing.assert_allclose(out.values, (avg / avg.shift(1) - 1).dropna().values, rtol=1e-14)
+    assert list(out.index.astype(str)) == ["2020-02", "2020-03"]
+    # an incomplete trailing month is dropped
+    assert avg_price_returns(r.loc[:"2020-03-10"]).index[-1] == pd.Period("2020-02", "M")

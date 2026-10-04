@@ -15,6 +15,7 @@ Runs not found (not run or failed): results_gold_avg
 | Sample 1982-, OOS 2000-01 | results_start1982 | 2000-01 to 2026-08 | avg | 0.70 | 0.63 | 0.57 | -28.9% | -28.1% | -28.8% | 8.47% | 7.35% | +1.12% | +0.27% |
 | Transaction costs x2 | results_costx2 | 1990-01 to 2026-08 | avg | 0.67 | 0.64 | 0.67 | -30.3% | -31.3% | -28.8% | 9.17% | 8.90% | +0.27% | +0.38% |
 | Oct-2025 gap not interpolated | results_gap_asis | 1990-01 to 2026-08 | avg | 0.70 | 0.64 | 0.67 | -30.2% | -31.3% | -28.8% | 9.44% | 8.92% | +0.52% | +0.27% |
+| All assets on monthly-average prices | results_all_avg | 1990-01 to 2026-08 | avg | 0.81 | 0.74 | 0.79 | -30.3% | -30.8% | -26.4% | 9.52% | 8.95% | +0.57% | +0.62% |
 
 ## All strategies, all runs
 
@@ -69,6 +70,13 @@ Runs not found (not run or failed): results_gold_avg
 | Oct-2025 gap not interpolated | Oracle Tilt | 0.73 | -30.3% | 9.71% | 9.7% | 5.7% |
 | Oct-2025 gap not interpolated | 60/40 | 0.67 | -28.8% | 8.91% | 9.4% | 0.9% |
 | Oct-2025 gap not interpolated | Static 1/3 | 0.77 | -15.8% | 8.01% | 6.9% | 1.1% |
+| All assets on monthly-average prices | Regime Tilt | 0.81 | -30.3% | 9.52% | 8.3% | 6.7% |
+| All assets on monthly-average prices | Uncond. Tilt | 0.74 | -30.8% | 8.95% | 8.4% | 0.5% |
+| All assets on monthly-average prices | Regime ERC | 0.82 | -27.8% | 9.12% | 7.8% | 2.2% |
+| All assets on monthly-average prices | Uncond. ERC | 0.81 | -28.1% | 8.99% | 7.7% | 1.1% |
+| All assets on monthly-average prices | Oracle Tilt | 0.92 | -28.5% | 10.14% | 7.9% | 6.0% |
+| All assets on monthly-average prices | 60/40 | 0.79 | -26.4% | 8.86% | 7.8% | 0.8% |
+| All assets on monthly-average prices | Static 1/3 | 0.83 | -17.2% | 7.94% | 6.2% | 1.0% |
 
 ## Block-bootstrap tests (stationary bootstrap, mean block 12 months, 5,000 resamples)
 
@@ -104,3 +112,7 @@ Max-drawdown difference > 0 means Regime Tilt's drawdown was shallower.
 | Oct-2025 gap not interpolated | Regime Tilt - Uncond. Tilt: Max drawdown | +1.1% | [-3.5%, +4.4%] | 0.440 |
 | Oct-2025 gap not interpolated | Regime Tilt - 60/40: Sharpe ratio | +0.03 | [-0.15, +0.21] | 0.757 |
 | Oct-2025 gap not interpolated | Regime Tilt - 60/40: Max drawdown | -1.4% | [-8.9%, +7.2%] | 0.596 |
+| All assets on monthly-average prices | Regime Tilt - Uncond. Tilt: Sharpe ratio | +0.07 | [-0.04, +0.18] | 0.195 |
+| All assets on monthly-average prices | Regime Tilt - Uncond. Tilt: Max drawdown | +0.5% | [-3.1%, +3.6%] | 0.547 |
+| All assets on monthly-average prices | Regime Tilt - 60/40: Sharpe ratio | +0.03 | [-0.15, +0.23] | 0.789 |
+| All assets on monthly-average prices | Regime Tilt - 60/40: Max drawdown | -4.0% | [-10.2%, +8.6%] | 0.291 |

@@ -13,6 +13,10 @@ supporting tables are in `results/findings_tables.md`, `results/robustness_summa
 - The October 2025 CPI and unemployment figures were never published. They were interpolated,
   and the one decision month that would have used unpublished information was left unlabelled
   (D7).
+- To test whether mixing averaged gold with month-end equities and Treasuries drives the results,
+  the whole study was rerun with every asset built from monthly-average prices
+  (`results_all_avg`; DEVIATIONS D10). Section C reports this check. Claims it does not support
+  are flagged in the text.
 - The sections below keep two kinds of evidence apart:
   - **Section A** is descriptive and in-sample: what each asset did in each regime, 1972-2026.
   - **Section B** is the out-of-sample walk-forward, 1990-01 to 2026-08, 440 months, after
@@ -54,9 +58,13 @@ Average monthly return in months when the US market fell:
 | Utilities (best sector) | -1.09% | -1.16% | -1.37% | -1.89% |
 
 - **Gold** had a positive average return in down-market months in all four regimes, most strongly
-  when inflation was rising (Reflation and Stagflation).
-- **Treasuries** cushioned equity losses most in Stagflation. In Disinflationary slowdown, the
-  regime where they were expected to hedge best, they did not (-0.09% per month).
+  when inflation was rising (Reflation and Stagflation). With all assets on monthly-average prices
+  the Goldilocks figure turns slightly negative (-0.26%); the inflation-regime result holds
+  (+1.91% and +1.21%).
+- **Treasuries** cushioned equity losses most in Stagflation in both versions (+0.82%; +0.99%
+  averaged). The draft's earlier observation that they failed to hedge in Disinflationary slowdown
+  (-0.09% per month) **is not robust**: with averaged prices they returned +0.35% there, so no
+  conclusion should be drawn for that regime.
 - Among sectors, Utilities lost least in every regime. Energy, Consumer Staples (NoDur) and, in
   Goldilocks, Telecom came next. Sectors reduced losses but never offset them.
 
@@ -195,17 +203,22 @@ adds only +0.35 pp a year. With 2-month confirmation the real-time strategy almo
 - Against 60/40, Regime Tilt's drawdown is 1.4 points deeper (p = 0.60) and its Sharpe ratio
   0.02 higher (p = 0.83).
 
-**Caveats on the static result.** Static 1/3 holds a third in gold, which flatters it twice:
-- the World Bank series uses monthly averages, which understate gold's volatility (17.2% a year,
-  first-order autocorrelation 0.27);
-- gold rose strongly over 2000-2026.
+**Caveats on the static result.** Static 1/3 holds a third in gold, and gold is measured with
+monthly averages.
+- A concern was that the mixed basis flatters it: averaged gold looks less volatile and less
+  correlated next to month-end equities. That is not what drives the result. With every asset on
+  monthly-average prices (Section C), Static 1/3 still has a drawdown of -17.2% against -30.3%
+  for Regime Tilt (supplementary bootstrap: -13.1 points, CI [-23.0%, +4.3%], p = 0.087).
+- Two caveats remain:
+  - gold's strong rise over 2000-2026 helps any portfolio holding a third in gold;
+  - averaging smooths every asset, so neither version measures true month-end drawdowns.
 
-The comparison should be repeated with a month-end gold price before it is emphasised.
+A month-end gold price would still be the definitive test.
 
 ### B3. What happened in 2022 and in the 2025 tariff shock?
 
-**2022 (Jan-Oct): Regime Tilt beat 60/40 but not its control, and its one regime switch went the
-wrong way** (findings_tables §3).
+**2022 (Jan-Oct): Regime Tilt beat 60/40 but not clearly its control, and its one regime switch
+went the wrong way** (findings_tables §3).
 
 | Strategy | Jan-Oct 2022 |
 |---|---|
@@ -216,6 +229,9 @@ wrong way** (findings_tables §3).
 | 60/40 | -18.3% |
 | Oracle Tilt | -7.2% |
 
+- Against its control the ranking is fragile. With all assets on monthly-average prices it
+  reverses: Regime Tilt -10.2% vs Uncond. Tilt -11.3%. The two should be described as roughly
+  equal in 2022.
 - The advantage over 60/40 came from structural, not regime-driven, holdings: about 20%
   Treasuries and about 25% gold, against 40% Treasuries in 60/40.
 - The signal read Reflation through the decision at end-May 2022 and switched to Stagflation for
@@ -246,7 +262,46 @@ wrong way** (findings_tables §3).
 
 ---
 
-## C. Limitations
+## C. Robustness check: all assets on monthly-average prices
+
+Gold is only available as monthly averages, while equities and Treasuries are month-end. So the
+whole study was rerun with industries (Ken French daily value-weighted portfolios), the market
+and the 10y Treasury all rebuilt from monthly-average price levels (`results_all_avg`,
+`results/findings_tables_all_avg.md`).
+
+**Averaging produces the same artefacts in every asset.**
+- Monthly autocorrelation rises from about 0 to between 0.16 and 0.32 (market: 0.03 → 0.24;
+  10y Treasury: 0.12 → 0.32).
+- Volatility falls by about 15% (market: 15.7% → 13.2%).
+- Gold's autocorrelation of 0.27 is therefore what averaging alone would produce.
+
+**What survives:**
+
+| | Main | All averaged |
+|---|---|---|
+| Regime Tilt Sharpe / max DD | 0.69 / -30.2% | 0.81 / -30.3% |
+| Uncond. Tilt Sharpe / max DD | 0.64 / -31.3% | 0.74 / -30.8% |
+| 60/40 Sharpe / max DD | 0.67 / -28.8% | 0.79 / -26.4% |
+| Static 1/3 Sharpe / max DD | 0.77 / -15.8% | 0.83 / -17.2% |
+| Value of the regime map | +0.45 pp (p = 0.36) | +0.57 pp (p = 0.19) |
+| Cost of detection lag | +0.35 pp | +0.62 pp |
+| Era stability (rank correlations) | 0.28 / -0.02 / -0.04 / -0.22 | 0.50 / -0.06 / -0.06 / -0.03 |
+| Stagflation: Treasuries rank 1972-89 → 1990+ | 12th → 2nd | 12th → 1st |
+| Stagflation: gold rank 1972-89 → 1990+ | 1st → 9th | 1st → 9th |
+
+- **Higher Sharpe ratios are an artefact.** All Sharpe ratios rise by about 0.1 under averaging.
+  That is the volatility understatement, not better performance.
+- **Robust:** the main conclusions do not depend on mixing price bases:
+  - a small, insignificant value from the regime map;
+  - no drawdown advantage over static diversification;
+  - an era split in which stagflation hedges changed;
+  - an unstable regime map in three of four regimes.
+- **Not robust (flagged above):**
+  - Treasuries failing to hedge in Disinflationary slowdown;
+  - gold hedging in Goldilocks;
+  - Regime Tilt losing more than its control in 2022.
+
+## D. Limitations
 
 1. **Few stagflation episodes.**
    - 138 stagflation months in total, 50 of them before 1990 from essentially two episodes
@@ -267,8 +322,10 @@ wrong way** (findings_tables §3).
      lowers measured volatility and correlations, and makes annual returns run from December
      average to December average.
    - No permitted free source offered a month-end USD series (LBMA feeds need a licence; the
-     Bundesbank has none). Gold's hedging statistics and the Static 1/3 result are the most
-     exposed.
+     Bundesbank has none; the World Gold Council workbook is also an average series and is
+     licence-restricted, see D9).
+   - The all-averages rerun (Section C) shows the mixed price basis does not drive the
+     conclusions. True month-end behaviour of gold is still untested.
 4. **US only.** The study uses US equities, US Treasuries and US macro signals. Whether the
    pattern holds internationally is untested.
 5. **Statistical power and multiple testing.**

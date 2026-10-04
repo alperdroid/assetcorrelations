@@ -19,4 +19,5 @@ $PY run_study.py --oos-start 2000-01 --out results_oos2000
 $PY run_study.py --sample-start 1982-01 --oos-start 2000-01 --out results_start1982
 $PY run_study.py --cost-mult 2 --out results_costx2
 $PY run_study.py --no-interp --out results_gap_asis   # Oct-2025 gap left as-is (robustness)
+$PY run_study.py --avg-prices --out results_all_avg   # all assets on monthly-average prices (robustness)
 $PY summarize_runs.py

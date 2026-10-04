@@ -16,6 +16,7 @@ python run_study.py              # downloads data to data/raw/, writes results/
 Options: `--refresh` (re-download), `--industries 17`, `--oos-start 2000-01`,
 `--confirm 2` (regime must persist 2 months before switching), `--sample-start 1982-01`,
 `--cost-mult 2` (scale all transaction costs), `--gold-avg` (ignore `data/gold_override.csv`),
+`--avg-prices` (robustness: all assets from monthly-average prices, like the gold series),
 `--bootstrap 5000` (block-bootstrap resamples for `significance.csv`; 0 skips), `--out results_x`.
 `./run_all.sh` runs data validation, the main run and every robustness run, then
 `summarize_runs.py`. `python -m pytest tests` runs the no-look-ahead tests (offline).

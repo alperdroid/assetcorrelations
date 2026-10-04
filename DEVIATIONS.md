@@ -187,6 +187,29 @@ Nothing else changed the methodology in README.md.
      and with publishing results based on it.
 - **Effect on results:** none. Gold remains the World Bank monthly-average series.
 
+## D10. Robustness variant: all assets on monthly-average prices (requested by the PI)
+
+- **What:** new flag `run_study.py --avg-prices` and run `results_all_avg`. Industry returns
+  are rebuilt from Ken French DAILY value-weighted industry portfolios
+  (`12_Industry_Portfolios_daily_CSV.zip`, first block 'Average Value Weighted Returns --
+  Daily'), the market from Fama-French daily Mkt-RF + RF, and the 10y Treasury from the daily
+  DGS10 total-return series. Each is turned into monthly returns between monthly AVERAGE price
+  levels (`data.avg_price_returns`; an incomplete trailing month is dropped). Gold (already an
+  average), RF and the macro signals are unchanged.
+- **Why:** gold is only available as monthly averages, while the other assets are month-end.
+  This checks whether the mixed price basis drives the results.
+- **Effect:** this is a separate variant only. Default results are unchanged: the main run was
+  rerun after the change and `oos_returns.csv` is byte-identical. Summary:
+  - Sharpe ratios rise by about 0.1 because averaging lowers volatility.
+  - The regime value is +0.57 pp (p = 0.19); main run +0.45 pp (p = 0.36).
+  - Static 1/3 max drawdown is -17.2% against -30.3% for Regime Tilt (supplementary bootstrap
+    p = 0.087).
+  - Three descriptive claims are not robust and are now flagged in `results/findings_draft.md`
+    (Section C): Treasuries in Disinflationary slowdown, gold in Goldilocks, and the 2022 ranking
+    against the control.
+  - Tables: `results/findings_tables_all_avg.md`, `results/all_avg_*.csv`,
+    `results_all_avg/significance_supplementary_static13.csv`.
+
 ## Pending checks (from the first session; resolution noted)
 
 1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal

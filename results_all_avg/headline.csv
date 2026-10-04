@@ -1,0 +1,12 @@
+,value
+regime_value_ann,0.005742775456393456
+detection_cost_ann,0.006202315571875783
+sample_start,1972-01
+sample_end,2026-08
+oos_start,1990-01
+industries,12
+confirm_months,1
+cost_bps,"{'equity': 10.0, 'UST10': 5.0, 'GOLD': 15.0}"
+gold_source,World Bank monthly average (datahub mirror)
+price_basis,monthly averages (all assets)
+interpolated,CPI: 2025-10; UNRATE: 2025-10
