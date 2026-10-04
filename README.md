@@ -108,6 +108,12 @@ Two headline decompositions:
    1999–2026 robustness check with SPDR sector ETFs (free prices from Stooq/Yahoo) shows investability.
 6. **US only.** International robustness can use Swinkels' international bond return data.
 
+## Study 2 (rule-based hedging strategies)
+
+`python study2.py` runs the hypotheses pre-registered in `PREREGISTRATION.md` (bond-hedge switch,
+trend overlays, volatility-managed equity) over 1973-2026. Results: `results_study2/report.md`,
+summary in `results/study2_findings.md`.
+
 ## Files
 
 `config.py` settings · `data.py` downloads and parsing · `regimes.py` signals ·

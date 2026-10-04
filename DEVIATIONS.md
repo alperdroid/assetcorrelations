@@ -210,6 +210,17 @@ Nothing else changed the methodology in README.md.
   - Tables: `results/findings_tables_all_avg.md`, `results/all_avg_*.csv`,
     `results_all_avg/significance_supplementary_static13.csv`.
 
+## D11. Study 2 added (separate study; no effect on Study 1 results)
+
+- After Study 1, the PI asked for new hypotheses. They were pre-registered in `PREREGISTRATION.md`
+  (commit 265f2d6) before any code or run. The code and timing tests were committed (c8851cf)
+  before the real-data run.
+- The study is implemented in `study2.py`, with results in `results_study2/` and
+  `results/study2_findings.md`.
+- No deviations from the pre-registration. The test fixes recorded in git (a wrong sign and a too
+  short window in `tests/test_study2.py`) were mistakes in how the tests were built. They were
+  made before the real run and changed no strategy code.
+
 ## Pending checks (from the first session; resolution noted)
 
 1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal
