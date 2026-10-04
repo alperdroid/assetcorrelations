@@ -212,6 +212,16 @@ table.heat tr.sep td { padding-top: 12px; }
 @media (max-width: 720px) { .fc-out { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .note { font-size: .8rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 10px; }
 
+.mtable { display: grid; gap: 2px; overflow-x: auto; }
+.mrow { display: grid; grid-template-columns: 210px minmax(260px, 1fr) 150px; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: .85rem; min-width: 620px; }
+.mrow.h { color: var(--muted); font-size: .74rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .08em; border-bottom: 0; }
+.mbars { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; }
+.mbar { position: relative; height: 26px; background: var(--surface-2); border-radius: 4px; }
+.mbar .z { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--faint); }
+.mbar .f { position: absolute; top: 5px; height: 16px; border-radius: 3px; }
+.pill { font-size: .72rem; font-family: var(--font-mono); padding: 3px 9px; border-radius: 999px; justify-self: start; }
+.pill.ok { background: color-mix(in oklab, var(--pos) 18%, var(--surface)); color: var(--pos); }
+.pill.no { background: var(--surface-2); color: var(--muted); }
 .method { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; font-size: .9rem; }
 .method ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
 footer { padding-block: 30px 50px; color: var(--muted); font-size: .8rem; border-top: 1px solid var(--line); }
@@ -380,6 +390,7 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: .8rem; border
           <div><h3>Horizon</h3><div class="slider" style="grid-template-columns:minmax(0,1fr) 64px"><input type="range" id="horizon" min="1" max="30" value="10"><output id="horizonOut" for="horizon">10 yrs</output></div></div>
           <div><h3>History to resample</h3><div class="chips" id="fcHist"></div></div>
           <div><h3>Inflation adjustment</h3><label class="toggle" for="real"><span>Show in today's dollars<small>Deflates by an assumed 2.5% a year</small></span><input type="checkbox" class="switch" id="real"></label></div>
+          <div><h3>Model forecasts</h3><label class="toggle" for="cond"><span>Condition on today's model forecasts<small id="condNote">Only components that passed their pre-registered test are used</small></span><input type="checkbox" class="switch" id="cond"></label></div>
           <p class="note">Uses your current mix from the Build section, including the trend overlay if it is on.</p>
         </div>
         <div class="panel">
@@ -387,6 +398,12 @@ footer { padding-block: 30px 50px; color: var(--muted); font-size: .8rem; border
           <div class="chart" id="fcChart"></div>
           <div class="fc-out" id="fcOut"></div>
         </div>
+      </div>
+      <div class="panel" id="modelsPanel" style="margin-top:18px" hidden>
+        <div class="chart-head"><h3>What the models can and cannot forecast</h3><span class="muted" style="font-size:.8rem" id="modelsSub"></span></div>
+        <p class="muted" style="font-size:.88rem;max-width:75ch;margin-bottom:12px">Study 5 pitted seven forecasting approaches against simple benchmarks, month by month since 1990, using only data available at the time. Bars show each model's out-of-sample R²: positive means it beat the benchmark (historical average for returns, last month's value for risk). A target passes only if a model beats the benchmark after correcting for the number of tests.</p>
+        <div class="mtable" id="mtable"></div>
+        <div class="cards" id="mcards" style="margin-top:14px"></div>
       </div>
     </div>
   </section>
@@ -448,7 +465,7 @@ const PRESETS = {
   golden: { label: 'Gold bug', w: { EQ: 1, UST10: 0, GOLD: 2, RF: 0 } },
 };
 const defSleeve = () => Object.fromEntries([['MKT', 100], ...SECT.map(s => [s, 0])]);
-const state = { w: { EQ: 33, UST10: 33, GOLD: 33, RF: 0 }, sleeve: defSleeve(), trend: false, costs: true, from: idx('1990-01'), to: LAST, preset: 'core', ep: '2022 inflation shock', heat: 'crisis', sel: 'Utils', rg: 'S', fcHist: 'full', horizon: 10, amount: 100000, real: false };
+const state = { w: { EQ: 33, UST10: 33, GOLD: 33, RF: 0 }, sleeve: defSleeve(), trend: false, costs: true, from: idx('1990-01'), to: LAST, preset: 'core', ep: '2022 inflation shock', heat: 'crisis', sel: 'Utils', rg: 'S', fcHist: 'full', horizon: 10, amount: 100000, real: false, cond: false };
 
 function normW(w) { const t = w.EQ + w.UST10 + w.GOLD + w.RF; return t > 0 ? { EQ: w.EQ / t, UST10: w.UST10 / t, GOLD: w.GOLD / t, RF: w.RF / t } : { EQ: 0, UST10: 0, GOLD: 0, RF: 1 }; }
 function sleeveShares(sl) { const keys = Object.keys(sl).filter(k => sl[k] > 0); const t = keys.reduce((a, k) => a + sl[k], 0); return t > 0 ? keys.map(k => [k, sl[k] / t]) : [['MKT', 1]]; }
@@ -757,10 +774,19 @@ function renderForecast() {
   const a = state.fcHist === 'full' ? idx('1973-01') : idx('1990-01');
   const you = simulate(youCfg(), a, LAST).r, six = simulate(SIXTY, a, LAST).r;
   const L = you.length, H = state.horizon * 12, P = 2000, rand = rng(20260101), defl = state.real ? 1 / 1.025 ** (1 / 12) : 1;
+  const C = (state.cond && DATA.s5) ? DATA.s5.cond : null, nw = normW(state.w);
+  const mean = k => { let s = 0; for (let t = a; t <= LAST; t++) s += S[k][t]; return s / (LAST - a + 1); };
+  const mu = { MKT: mean('MKT'), UST10: mean('UST10'), GOLD: mean('GOLD') };
+  const adj = (wE, wU, wG, j, t) => { if (!C) return 0; let x = 0; const m = a + j;
+    if (t <= 12 && C.vol.MKT) x += wE * (C.vol.MKT - 1) * (S.MKT[m] - mu.MKT);
+    if (t <= 12 && C.vol.UST10) x += wU * (C.vol.UST10 - 1) * (S.UST10[m] - mu.UST10);
+    if (C.ust_anchor != null && t <= 120) x += wU * (C.ust_anchor - mu.UST10);
+    if (t <= 12) { if (C.mean.MKT != null) x += wE * (C.mean.MKT - mu.MKT); if (C.mean.UST10 != null) x += wU * (C.mean.UST10 - mu.UST10); if (C.mean.GOLD != null) x += wG * (C.mean.GOLD - mu.GOLD); }
+    return x; };
   const ends = new Float64Array(P), ends6 = new Float64Array(P), mdds = new Float64Array(P), grid = new Float32Array(P * (H + 1)), grid6 = new Float32Array(P * (H + 1));
   for (let p = 0; p < P; p++) {
     let j = Math.floor(rand() * L), w = 1, w6 = 1, pk = 1, md = 0; grid[p * (H + 1)] = 1; grid6[p * (H + 1)] = 1;
-    for (let t = 1; t <= H; t++) { if (t > 1) j = rand() < 1 / 12 ? Math.floor(rand() * L) : (j + 1) % L; w *= (1 + you[j]) * defl; w6 *= (1 + six[j]) * defl; if (w > pk) pk = w; md = Math.min(md, w / pk - 1); grid[p * (H + 1) + t] = w; grid6[p * (H + 1) + t] = w6; }
+    for (let t = 1; t <= H; t++) { if (t > 1) j = rand() < 1 / 12 ? Math.floor(rand() * L) : (j + 1) % L; w *= (1 + you[j] + adj(nw.EQ, nw.UST10, nw.GOLD, j, t)) * defl; w6 *= (1 + six[j] + adj(.6, .4, 0, j, t)) * defl; if (w > pk) pk = w; md = Math.min(md, w / pk - 1); grid[p * (H + 1) + t] = w; grid6[p * (H + 1) + t] = w6; }
     ends[p] = w; ends6[p] = w6; mdds[p] = md;
   }
   const q = (arr, k) => { const s = Float64Array.from(arr).sort(); return s[Math.min(s.length - 1, Math.floor(k * s.length))]; };
@@ -770,7 +796,7 @@ function renderForecast() {
   const p5 = band(grid, .05), p25 = band(grid, .25), p50 = band(grid, .5), p75 = band(grid, .75), p95 = band(grid, .95), m6 = band(grid6, .5);
   const sc = v => v.map(x => x * amt);
   const fmt$ = v => v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : '$' + Math.round(v / 1000) + 'k';
-  $('fcTitle').textContent = `Range of outcomes over ${state.horizon} year${state.horizon > 1 ? 's' : ''}${state.real ? " (today's dollars)" : ''}`;
+  $('fcTitle').textContent = `Range of outcomes over ${state.horizon} year${state.horizon > 1 ? 's' : ''}${state.real ? " (today's dollars)" : ''}${C ? ', conditioned on model forecasts' : ''}`;
   lineChart($('fcChart'), { n: ts.length, height: 300, label: 'Simulated range of portfolio values', fmtY: fmt$, fmtT: v => fmt$(v), xLabel: i => `Year ${(ts[i] / 12).toFixed(ts[i] % 12 ? 1 : 0)}`, refLine: amt,
     xTicks: ts.map((t, i) => [i, t]).filter(([i, t]) => t % (state.horizon > 15 ? 60 : state.horizon > 5 ? 24 : 12) === 0).map(([i, t]) => [i, `yr ${t / 12}`]),
     bands: [{ lo: sc(p5), hi: sc(p95), color: 'var(--you)', op: .12 }, { lo: sc(p25), hi: sc(p75), color: 'var(--you)', op: .22 }],
@@ -784,6 +810,29 @@ function buildForecastControls() {
   $('horizon').oninput = e => { state.horizon = +e.target.value; $('horizonOut').textContent = state.horizon + ' yrs'; scheduleFc(); };
   $('amount').onchange = e => { const v = +String(e.target.value).replace(/[^0-9.]/g, ''); state.amount = v > 0 ? v : 100000; e.target.value = state.amount.toLocaleString('en-US'); renderForecast(); };
   $('real').onchange = e => { state.real = e.target.checked; renderForecast(); };
+  const C = DATA.s5 && DATA.s5.cond, any = C && (Object.keys(C.vol).length || Object.keys(C.mean).length || C.ust_anchor != null);
+  if (!any) { $('cond').disabled = true; $('condNote').textContent = DATA.s5 ? 'No model passed its pre-registered test, so this stays off' : 'Model results not available'; }
+  else { const parts = []; if (C.vol.MKT) parts.push(`stock volatility x${C.vol.MKT.toFixed(2)}`); if (C.vol.UST10) parts.push(`Treasury volatility x${C.vol.UST10.toFixed(2)}`); if (C.ust_anchor != null) parts.push(`Treasuries anchored to today's ${(DATA.s5.y10 * 100).toFixed(2)}% yield`); ['MKT', 'UST10', 'GOLD'].forEach(k => { if (C.mean[k] != null) parts.push(`${ASSET[k]} 12-month mean from model`); }); $('condNote').textContent = 'Uses: ' + parts.join('; ') + '. Volatility scaling applies to the first 12 months.'; }
+  $('cond').onchange = e => { state.cond = e.target.checked; renderForecast(); };
+  renderModels();
+}
+const MNAME = { enet: 'Elastic net', rf: 'Random forest', gbm: 'Gradient boosting', mlp: 'Neural net', regime_rf: 'Regime + RF', ensemble: 'ML ensemble', yield_anchor: 'Yield anchor', har: 'HAR', garch: 'GARCH' };
+function renderModels() {
+  const s5 = DATA.s5; if (!s5) return; $('modelsPanel').hidden = false;
+  $('modelsSub').textContent = `out-of-sample, decision months Dec 1989 to ${nice(idx(s5.decision))}`;
+  const all = s5.rows.flatMap(r => Object.values(r.models)); const M = Math.max(0.05, ...all.map(Math.abs));
+  const bar = (m, v) => { const w = Math.min(50, Math.abs(v) / M * 50); return `<div class="mbar" title="${MNAME[m] || m}: R² ${(v * 100).toFixed(2)}%"><span class="z"></span><span class="f" style="${v >= 0 ? `left:50%` : `left:${50 - w}%`};width:${w}%;background:${v >= 0 ? 'var(--pos)' : 'var(--neg)'};opacity:.75"></span></div>`; };
+  const head = `<div class="mrow h"><span>Target</span><span>Each model's R² vs benchmark (hover for name; centre line = 0)</span><span>Verdict</span></div>`;
+  $('mtable').innerHTML = head + s5.rows.map(r => `<div class="mrow"><span>${r.label}<br><span class="muted mono" style="font-size:.74rem">best: ${MNAME[r.best] || r.best} ${(r.best_r2 * 100).toFixed(2)}%</span></span><span class="mbars">${Object.entries(r.models).map(([m, v]) => bar(m, v)).join('')}</span><span class="pill ${r.pass_model ? 'ok' : 'no'}">${r.pass_model ? `Passes: ${MNAME[r.pass_model] || r.pass_model}` : 'No model beats benchmark'}</span></div>`).join('');
+  const rg = s5.regime, pr = s5.regime_probs;
+  const h2hAny = s5.h2h.some(h => h.p < 0.05 && h.r2 > 0);
+  const econ = s5.econ;
+  const card = (tag, ok, title, body) => `<div class="card"><span class="tag ${ok ? '' : 'bad'}" style="${ok ? 'background:color-mix(in oklab, var(--pos) 18%, var(--surface));color:var(--pos)' : ''}">${tag}</span><h3>${title}</h3><p>${body}</p></div>`;
+  $('mcards').innerHTML =
+    card(rg.mcnemar_p < 0.05 && rg.accuracy_stage1 > rg.accuracy_persist ? 'Beats persistence' : 'No better than persistence', rg.mcnemar_p < 0.05 && rg.accuracy_stage1 > rg.accuracy_persist, 'Regime forecasting', `Random-forest classifier: ${(rg.accuracy_stage1 * 100).toFixed(0)}% correct vs ${(rg.accuracy_persist * 100).toFixed(0)}% for "next month = this month" (${rg.months} months, p = ${rg.mcnemar_p.toFixed(2)}).`) +
+    card(h2hAny ? 'Adds value' : 'Adds nothing', h2hAny, 'Regime + random forest vs plain RF', `Adding forecast regime probabilities changed out-of-sample R² by ${s5.h2h.map(h => (h.r2 * 100).toFixed(1) + '%').join(', ')} across the six return targets.`) +
+    card(econ.some(e => e.pass && e.diff > 0) ? 'Some economic value' : 'No economic value', econ.some(e => e.pass && e.diff > 0), 'Using forecasts in a portfolio', econ.map(e => `${e.test.replace(/^E\d /, '')} ${e.stat}: ${e.stat === 'Sharpe' ? (e.diff >= 0 ? '+' : '') + e.diff.toFixed(2) : (e.diff * 100 >= 0 ? '+' : '') + (e.diff * 100).toFixed(1) + ' pts'} (adj. p ${e.p.toFixed(2)})`).join('; ') + '.') +
+    (pr ? card('Current model view', true, `Next-month regime odds (${nice(idx(s5.decision) + 1)})`, Object.entries(pr).map(([k, v]) => `${RGNAME[k]} ${(v * 100).toFixed(0)}%`).join(' · ') + '. Shown for interest: the classifier above is the test of whether these odds are useful.') : '');
 }
 let fcPending = false; function scheduleFc() { if (fcPending) return; fcPending = true; requestAnimationFrame(() => { fcPending = false; renderForecast(); }); }
 
