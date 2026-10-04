@@ -160,6 +160,33 @@ Nothing else changed the methodology in README.md.
     when the table was written, after the results had been seen. It is a summary device only.
 - `results_gap_asis`: robustness run without the D7 interpolation (`--no-interp`).
 
+## D9. World Gold Council workbook supplied by the PI: checked and NOT used (no effect on results)
+
+- **File:** `Gold_price_averages_in_a_range_of_currencies_since_1978.xlsx`, uploaded 2026-10-04.
+  It was not copied into the repository (see the licence point below). Its sheets are Disclaimer,
+  Yearly_Avg, Quarterly_Avg and Monthly_Avg. The USD column of Monthly_Avg has 585 rows, from
+  1978-01 to 2026-09.
+- **Why not used:**
+  1. **It is monthly AVERAGES, not month-end prices.** There is no daily or end-of-period sheet,
+     so it does not fix the smoothing problem in D2. From 1999 onward it matches the World Bank
+     series to within about 0.5% (both are averages of the LBMA PM price). On 1990-2026 returns
+     the two series have a correlation of 0.88, annualised volatility of 12.7% vs 12.5%, and
+     first-order autocorrelation of 0.17 vs 0.18.
+  2. **The monthly sheet is misdated for 1978-01 to 1998-11.** The value at WGC month m equals the
+     World Bank value at month m+11. For example, WGC 1979-02 is 675.31 and the World Bank's
+     1980-01 is 675; WGC 1998-11 is 310.72 and the World Bank's 1999-10 is 311. The months
+     1999-01 to 1999-10 therefore appear twice.
+     - The file contradicts itself: its own Yearly_Avg gives 1979 = 304.68 and 1980 = 614.50
+       (the World Bank gives 306.75 and 607.83), but the mean of its 1979 monthly values is 600.91.
+     - Using it would have shifted gold returns by 11 months for the whole 1978-89 training window
+       and most of the 1990s.
+  3. **Licence.** The workbook's disclaimer says LBMA Gold Price information "may be used by you
+     internally to review the analysis provided by the World Gold Council, but may not be used for
+     any other purpose" and "may not be disclosed by you to anyone else", and it prohibits
+     redistribution. This conflicts with ground rule 3 (no LBMA price data that needs a licence)
+     and with publishing results based on it.
+- **Effect on results:** none. Gold remains the World Bank monthly-average series.
+
 ## Pending checks (from the first session; resolution noted)
 
 1. RESOLVED: the gap exists, see D7. Original note: **Possible missing October 2025 CPI and unemployment observations.** The October 2025 federal
