@@ -1,0 +1,810 @@
+<title>Crisis Hedge Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single long lab bench. A sticky instrument bar on top, a hero thesis, then seven
+   numbered-free sections; the portfolio you build travels through every section. */
+:root {
+  --bg: #f4f4f8;
+  --surface: #ffffff;
+  --surface-2: #ecebf3;
+  --ink: #161827;
+  --muted: #5b5e74;
+  --faint: #8a8da3;
+  --line: #dcdce7;
+  --you: #5b4bd1;          /* the viewer's portfolio: the one accent */
+  --you-soft: #e7e3fb;
+  --ref: #2b2e42;          /* core 1/3 reference line */
+  --ref-2: #8a8da3;        /* 60/40 reference line */
+  --eq: #2a78d6; --ust: #1baf7a; --gold: #eda100; --cash: #9a9cb0;
+  --pos: #1f8a5b; --neg: #d1453b;
+  --rg-G: #2a78d6; --rg-R: #eb6834; --rg-S: #e34948; --rg-D: #e87ba4;
+  --shadow: 0 1px 2px rgba(22, 24, 39, .06), 0 8px 24px rgba(22, 24, 39, .06);
+  --font-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1019; --surface: #171826; --surface-2: #1f2132; --ink: #ecedf6; --muted: #a6a8bf; --faint: #7a7d95;
+    --line: #2a2c40; --you: #9c8ff5; --you-soft: #2a2550; --ref: #d9dbea; --ref-2: #7a7d95;
+    --eq: #3987e5; --ust: #199e70; --gold: #c98500; --cash: #6e7088; --pos: #3fb37a; --neg: #e66767;
+    --rg-G: #3987e5; --rg-R: #d95926; --rg-S: #e66767; --rg-D: #d55181;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1019; --surface: #171826; --surface-2: #1f2132; --ink: #ecedf6; --muted: #a6a8bf; --faint: #7a7d95;
+  --line: #2a2c40; --you: #9c8ff5; --you-soft: #2a2550; --ref: #d9dbea; --ref-2: #7a7d95;
+  --eq: #3987e5; --ust: #199e70; --gold: #c98500; --cash: #6e7088; --pos: #3fb37a; --neg: #e66767;
+  --rg-G: #3987e5; --rg-R: #d95926; --rg-S: #e66767; --rg-D: #d55181;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px rgba(0, 0, 0, .3);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; }
+h3 { font-size: 1.05rem; font-weight: 700; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.mono, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.eyebrow { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+a { color: var(--you); }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--you); outline-offset: 2px; border-radius: 6px; }
+
+/* top bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in oklab, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 18px; height: 56px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+.brand-mark { width: 22px; height: 22px; border-radius: 6px; background: conic-gradient(var(--eq) 0 33.3%, var(--ust) 0 66.6%, var(--gold) 0); }
+.nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; min-width: 0; flex: 1; }
+.nav a { text-decoration: none; color: var(--muted); padding: 6px 10px; border-radius: 999px; font-size: .88rem; white-space: nowrap; }
+.nav a.on { color: var(--ink); background: var(--surface-2); }
+.mini { display: flex; align-items: center; gap: 10px; font-size: .8rem; white-space: nowrap; }
+.mini .alloc { width: 90px; height: 8px; }
+@media (max-width: 860px) { .mini { display: none; } }
+
+/* hero */
+.hero { padding-block: 44px 28px; display: grid; gap: 22px; }
+.hero h1 { font-size: clamp(2.1rem, 5.2vw, 3.9rem); font-weight: 800; line-height: 1.02; max-width: 17ch; }
+.hero h1 em { font-style: normal; color: var(--you); }
+.hero .lede { max-width: 62ch; color: var(--muted); font-size: 1.05rem; }
+.facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 4px; }
+.fact .big { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line-height: 1; }
+.fact p { font-size: .88rem; color: var(--muted); }
+@media (max-width: 720px) { .facts { grid-template-columns: 1fr; } }
+
+section.block { padding-block: 40px; border-top: 1px solid var(--line); scroll-margin-top: 64px; }
+.head { display: grid; gap: 8px; margin-bottom: 22px; max-width: 70ch; }
+.head p { color: var(--muted); }
+
+/* panels and controls */
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; box-shadow: var(--shadow); min-width: 0; }
+.grid-build { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 920px) { .grid-build { grid-template-columns: minmax(0, 1fr); } }
+.ctl { display: grid; gap: 16px; }
+.ctl h3 { font-size: .8rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 500; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 11px; font-size: .84rem; cursor: pointer; transition: background .15s, border-color .15s; }
+.chip:hover { border-color: var(--you); }
+.chip[aria-pressed="true"] { background: var(--you); border-color: var(--you); color: #fff; }
+:root[data-theme="dark"] .chip[aria-pressed="true"] { color: #12111f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .chip[aria-pressed="true"] { color: #12111f; } }
+.slider { display: grid; grid-template-columns: 92px minmax(0, 1fr) 46px; align-items: center; gap: 10px; font-size: .9rem; }
+.slider .sw { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 6px; }
+.slider output { text-align: right; font-family: var(--font-mono); font-size: .85rem; }
+input[type="range"] { width: 100%; accent-color: var(--you); }
+.toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: .9rem; }
+.toggle small { display: block; color: var(--muted); font-size: .78rem; }
+.switch { appearance: none; width: 38px; height: 22px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line); position: relative; cursor: pointer; flex: none; transition: background .2s; }
+.switch::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: var(--faint); transition: transform .2s, background .2s; }
+.switch:checked { background: var(--you); border-color: var(--you); }
+.switch:checked::after { transform: translateX(16px); background: #fff; }
+details.sleeve summary { cursor: pointer; font-size: .9rem; color: var(--you); }
+details.sleeve[open] summary { margin-bottom: 10px; }
+.sleeve-list { display: grid; gap: 6px; }
+.sleeve-list .slider { grid-template-columns: 128px minmax(0, 1fr) 40px; font-size: .82rem; }
+.range-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: .88rem; }
+select { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 4px 8px; }
+.allocbar { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+.allocbar span { display: block; height: 100%; transition: width .3s; }
+.legend-inline { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: .78rem; color: var(--muted); margin-top: 6px; }
+.legend-inline i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+.tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 1100px) { .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tile { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 2px; background: var(--surface); }
+.tile .k { font-size: .74rem; color: var(--muted); }
+.tile .v { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; }
+.tile .d { font-family: var(--font-mono); font-size: .72rem; }
+.d.good { color: var(--pos); } .d.bad { color: var(--neg); } .d.flat { color: var(--muted); }
+.verdict { margin-top: 12px; padding: 10px 14px; border-radius: 10px; background: var(--you-soft); font-size: .92rem; }
+
+/* charts */
+.chart { position: relative; width: 100%; min-width: 0; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.chart .grid line { stroke: var(--line); }
+.chart .zero { stroke: var(--faint); }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 10px; padding: 8px 10px; font-size: .78rem; min-width: 150px; z-index: 5; opacity: 0; transition: opacity .12s; }
+.tip b { font-family: var(--font-mono); font-weight: 500; }
+.tip .row { display: flex; justify-content: space-between; gap: 14px; }
+.tip i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.chart-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.chart-head h3 { font-size: 1rem; }
+.key { display: flex; gap: 14px; flex-wrap: wrap; font-size: .8rem; color: var(--muted); }
+.key span::before { content: ""; display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--c); margin-right: 6px; vertical-align: 3px; }
+.key span.dash::before { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
+.stack { display: grid; gap: 18px; }
+@media (prefers-reduced-motion: no-preference) { .draw path.line { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: draw 900ms ease-out forwards; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* bars */
+.bars { display: grid; gap: 5px; }
+.bars .b { display: grid; grid-template-columns: 150px minmax(0, 1fr) 64px; align-items: center; gap: 10px; font-size: .84rem; }
+.bars .b .lab { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bars .track { position: relative; height: 16px; }
+.bars .track .z { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--faint); }
+.bars .track .fill { position: absolute; top: 0; height: 100%; border-radius: 4px; background: var(--cash); transition: left .4s, width .4s; }
+.bars .val { text-align: right; font-family: var(--font-mono); font-size: .8rem; }
+.bars .b.you .lab { font-weight: 600; color: var(--you); }
+.bars .b.sep { margin-top: 8px; }
+@media (max-width: 560px) { .bars .b { grid-template-columns: 104px minmax(0, 1fr) 54px; } }
+
+.two { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; }
+.two.wide { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+@media (max-width: 920px) { .two, .two.wide { grid-template-columns: minmax(0, 1fr); } }
+.ep-info { display: grid; gap: 4px; margin-bottom: 12px; }
+.ep-info .when { font-family: var(--font-mono); font-size: .8rem; color: var(--muted); }
+.playrow { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.btn { border: 1px solid var(--you); color: var(--you); background: transparent; border-radius: 999px; padding: 5px 14px; cursor: pointer; font-size: .85rem; }
+.btn.solid { background: var(--you); color: #fff; }
+
+/* heatmap */
+.heat-wrap { overflow-x: auto; }
+table.heat { border-collapse: separate; border-spacing: 3px; font-size: .8rem; min-width: 640px; width: 100%; }
+table.heat th { font-weight: 500; color: var(--muted); text-align: left; padding: 4px 6px; font-size: .74rem; vertical-align: bottom; }
+table.heat td { text-align: center; padding: 7px 4px; border-radius: 6px; font-family: var(--font-mono); font-variant-numeric: tabular-nums; cursor: default; }
+table.heat td.rowlab { text-align: left; font-family: var(--font-body); white-space: nowrap; cursor: pointer; padding-right: 10px; }
+table.heat tr.sel td.rowlab { color: var(--you); font-weight: 600; }
+table.heat tr.sep td { padding-top: 12px; }
+.sector-card { display: grid; gap: 10px; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: .88rem; }
+.kv span:nth-child(even) { font-family: var(--font-mono); text-align: right; }
+
+/* regimes */
+.strip { width: 100%; }
+.rg-key { display: flex; gap: 6px; flex-wrap: wrap; }
+.rg-key .chip i { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 6px; }
+.pair { display: grid; gap: 4px; }
+.pair .p { display: grid; grid-template-columns: 150px minmax(0, 1fr) 90px; gap: 10px; align-items: center; font-size: .82rem; }
+.pair .tr { position: relative; height: 18px; }
+.pair .tr .z { position: absolute; top: -2px; bottom: -2px; width: 1px; background: var(--faint); }
+.pair .tr .a, .pair .tr .b2 { position: absolute; height: 7px; border-radius: 3px; transition: left .4s, width .4s; }
+.pair .tr .a { top: 1px; background: color-mix(in oklab, var(--rgc) 45%, var(--surface)); }
+.pair .tr .b2 { top: 10px; background: var(--rgc); }
+.pair .vals { font-family: var(--font-mono); font-size: .76rem; text-align: right; color: var(--muted); }
+@media (max-width: 560px) { .pair .p { grid-template-columns: 96px minmax(0, 1fr) 76px; } }
+.bigstat { font-family: var(--font-display); font-weight: 800; font-size: 2.4rem; line-height: 1; }
+
+/* strategies */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+.card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 6px; background: var(--surface); align-content: start; }
+.card .tag { justify-self: start; font-size: .7rem; font-family: var(--font-mono); padding: 2px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.card .tag.bad { background: color-mix(in oklab, var(--neg) 16%, var(--surface)); color: var(--neg); }
+.card p { font-size: .85rem; color: var(--muted); }
+.card .n { font-family: var(--font-mono); font-size: .82rem; }
+
+/* forecast */
+.grid-fc { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 920px) { .grid-fc { grid-template-columns: minmax(0, 1fr); } }
+.money { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; background: var(--surface); }
+.money input { border: 0; background: transparent; width: 100%; font-family: var(--font-mono); outline: none; }
+.fc-out { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+@media (max-width: 720px) { .fc-out { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.note { font-size: .8rem; color: var(--muted); border-left: 3px solid var(--line); padding-left: 10px; }
+
+.method { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; font-size: .9rem; }
+.method ul { margin: 6px 0 0; padding-left: 18px; color: var(--muted); }
+footer { padding-block: 30px 50px; color: var(--muted); font-size: .8rem; border-top: 1px solid var(--line); }
+</style>
+
+<header class="bar">
+  <div class="wrap">
+    <div class="brand"><span class="brand-mark" aria-hidden="true"></span>Crisis Hedge Lab</div>
+    <nav class="nav" aria-label="Sections">
+      <a href="#build">Build</a><a href="#crises">Crises</a><a href="#sectors">Sectors</a><a href="#regimes">Regimes</a><a href="#strategies">Strategies</a><a href="#forecast">Forecast</a><a href="#method">Method</a>
+    </nav>
+    <div class="mini" aria-live="polite"><div class="allocbar alloc" id="miniAlloc"></div><span id="miniStats" class="mono"></span></div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <div class="eyebrow">54 years of US data · 10 timing strategies tested · 12 sectors</div>
+    <h1>Bonds stopped protecting stocks in 2022. <em>What would have?</em></h1>
+    <p class="lede">Build a portfolio from stocks, sectors, Treasuries, gold and cash, then replay it through every crisis since 1973, compare it with the strategies we tested, and simulate thousands of possible futures from resampled history.</p>
+    <div class="facts">
+      <div class="fact"><span class="big" id="fact1">-18.3%</span><p>10-year Treasuries in the 2022 inflation shock, while US stocks fell 18.8%.</p></div>
+      <div class="fact"><span class="big" id="fact2">-15.8%</span><p>Worst drawdown since 1990 for 1/3 stocks, Treasuries and gold, against -28.8% for 60/40.</p></div>
+      <div class="fact"><span class="big">0 of 10</span><p>Timing strategies that beat the simple mix in tests agreed before results were seen.</p></div>
+    </div>
+  </div>
+
+  <section class="block" id="build">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Build</div>
+        <h2>Your portfolio, back-tested live</h2>
+        <p>Pick a preset or move the sliders. Weights are rescaled to 100% and rebalanced every month, after trading costs. Your mix is compared with the core 1/3 mix and a 60/40 portfolio.</p>
+      </div>
+      <div class="grid-build">
+        <div class="panel ctl" id="controls">
+          <div>
+            <h3>Presets</h3>
+            <div class="chips" id="presets"></div>
+          </div>
+          <div>
+            <h3>Allocation</h3>
+            <div class="stack" style="gap:10px" id="assetSliders"></div>
+            <div style="margin-top:10px" class="allocbar" id="allocBar"></div>
+            <div class="legend-inline" id="allocLegend"></div>
+          </div>
+          <details class="sleeve" id="sleeveBox">
+            <summary>Customize the stock sleeve by sector</summary>
+            <div class="sleeve-list" id="sectorSliders"></div>
+            <p class="muted" style="font-size:.78rem;margin-top:8px">Relative weights inside the stock sleeve. "Whole market" is the value-weighted US market.</p>
+          </details>
+          <div>
+            <h3>Rules</h3>
+            <div class="stack" style="gap:12px">
+              <label class="toggle" for="trend"><span>Trend-into-cash overlay<small>Each sleeve moves to T-bills while its 12-month return trails T-bills</small></span><input type="checkbox" class="switch" id="trend"></label>
+              <label class="toggle" for="costs"><span>Trading costs<small>0.10% stocks, 0.05% Treasuries, 0.15% gold per trade</small></span><input type="checkbox" class="switch" id="costs" checked></label>
+            </div>
+          </div>
+          <div>
+            <h3>Period</h3>
+            <div class="chips" id="periods"></div>
+            <div class="range-row" style="margin-top:8px">
+              <label for="fromY">From</label><select id="fromY"></select>
+              <label for="toY">to</label><select id="toY"></select>
+            </div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="tiles" id="tiles"></div>
+          <div class="panel">
+            <div class="chart-head"><h3 id="wealthTitle">Growth of $1</h3><div class="key"><span style="--c:var(--you)">Your mix</span><span style="--c:var(--ref)">Core 1/3</span><span class="dash" style="--c:var(--ref-2)">60/40</span></div></div>
+            <div class="chart" id="wealthChart"></div>
+            <div class="chart-head" style="margin-top:14px"><h3>Drawdown from previous peak</h3></div>
+            <div class="chart" id="ddChart"></div>
+            <div class="verdict" id="verdict"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="crises">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Crisis replay</div>
+        <h2>How your mix rode out ten crises</h2>
+        <p>Pick an episode. The left chart replays it month by month; the right ranks every asset and sector by its total return over the episode.</p>
+      </div>
+      <div class="chips" id="episodes" style="margin-bottom:16px"></div>
+      <div class="two">
+        <div class="panel">
+          <div class="ep-info"><h3 id="epName"></h3><div class="when" id="epWhen"></div><p class="muted" id="epDesc"></p></div>
+          <div class="chart-head"><h3>Cumulative return through the episode</h3><div class="key"><span style="--c:var(--you)">Your mix</span><span style="--c:var(--ref)">Core 1/3</span><span class="dash" style="--c:var(--ref-2)">60/40</span></div></div>
+          <div class="chart" id="epChart"></div>
+          <div class="playrow"><button class="btn solid" id="play" type="button">Replay</button><span class="muted mono" id="epClock" style="font-size:.8rem"></span></div>
+        </div>
+        <div class="panel">
+          <div class="chart-head"><h3>Total return over the episode</h3></div>
+          <div class="bars" id="epBars"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="sectors">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Sector explorer</div>
+        <h2>Some sectors reliably fall less. None reliably rise.</h2>
+        <p>Switch the view, then click a sector to see its profile and tilt your stock sleeve toward it. Green means it held up, red means it fell; in the correlation view, blue means Treasuries hedged that sector.</p>
+      </div>
+      <div class="chips" id="heatModes" style="margin-bottom:12px"></div>
+      <div class="two wide">
+        <div class="panel heat-wrap"><table class="heat" id="heat"></table></div>
+        <div class="panel sector-card" id="sectorCard"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="regimes">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Regime map</div>
+        <h2>Which assets win in each economic regime changed completely after 1990</h2>
+        <p>Each month is labelled with the growth × inflation regime that was knowable in real time. Pick a regime to compare each asset's Sharpe ratio in that regime in 1972–89 (light) and 1990–2026 (dark).</p>
+      </div>
+      <div class="panel" style="margin-bottom:16px">
+        <div class="chart" id="strip"></div>
+        <div class="rg-key chips" id="rgKey" style="margin-top:10px"></div>
+      </div>
+      <div class="two">
+        <div class="panel"><div class="chart-head"><h3 id="pairTitle"></h3></div><div class="pair" id="pairs"></div></div>
+        <div class="panel" style="display:grid;gap:14px;align-content:start">
+          <div><div class="eyebrow">Rank correlation between eras</div><div class="bigstat" id="rankCorr"></div><p class="muted" id="rankNote" style="font-size:.88rem"></p></div>
+          <div class="kv" id="rgFacts"></div>
+          <p class="note">Sharpe ratios in a regime are noisy: with 50–130 months per cell, a difference below about 0.6 is within normal variation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="strategies">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Strategy lab</div>
+        <h2>Ten timing strategies, one stubborn benchmark</h2>
+        <p>Every strategy was specified before its results were seen and tested against a static control. Your current mix is plotted live on the same 1990–2026 basis.</p>
+      </div>
+      <div class="two">
+        <div class="panel"><div class="chart-head"><h3>Worst drawdown vs Sharpe ratio, US 1990–2026</h3></div><div class="chart" id="scatter"></div></div>
+        <div class="cards" id="cards"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="forecast">
+    <div class="wrap">
+      <div class="head">
+        <div class="eyebrow">Forecast simulator</div>
+        <h2>2,000 possible futures for your mix</h2>
+        <p>Each path strings together random 12-month-average blocks of your portfolio's real monthly history. It shows a range of outcomes if the future resembles a reshuffled past. It is not a prediction.</p>
+      </div>
+      <div class="grid-fc">
+        <div class="panel ctl">
+          <div><h3>Starting amount</h3><label class="money" for="amount"><span class="muted">$</span><input id="amount" type="text" inputmode="numeric" value="100,000"></label></div>
+          <div><h3>Horizon</h3><div class="slider" style="grid-template-columns:minmax(0,1fr) 64px"><input type="range" id="horizon" min="1" max="30" value="10"><output id="horizonOut" for="horizon">10 yrs</output></div></div>
+          <div><h3>History to resample</h3><div class="chips" id="fcHist"></div></div>
+          <div><h3>Inflation adjustment</h3><label class="toggle" for="real"><span>Show in today's dollars<small>Deflates by an assumed 2.5% a year</small></span><input type="checkbox" class="switch" id="real"></label></div>
+          <p class="note">Uses your current mix from the Build section, including the trend overlay if it is on.</p>
+        </div>
+        <div class="panel">
+          <div class="chart-head"><h3 id="fcTitle">Range of outcomes</h3><div class="key"><span style="--c:var(--you)">Your mix, median</span><span class="dash" style="--c:var(--ref-2)">60/40, median</span></div></div>
+          <div class="chart" id="fcChart"></div>
+          <div class="fc-out" id="fcOut"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="method">
+    <div class="wrap">
+      <div class="head"><div class="eyebrow">Method</div><h2>How the numbers are made</h2></div>
+      <div class="method">
+        <div><h3>Data</h3><ul>
+          <li>US market, T-bills and 12 industries: <a href="https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" target="_blank" rel="noopener">Kenneth R. French Data Library</a></li>
+          <li>10-year Treasury total return built from <a href="https://fred.stlouisfed.org/series/DGS10" target="_blank" rel="noopener">FRED DGS10</a></li>
+          <li>Gold: World Bank monthly averages (<a href="https://github.com/datasets/gold-prices" target="_blank" rel="noopener">datahub mirror</a>); averaging smooths gold's volatility</li>
+          <li>Regimes: CPI, unemployment and the Philadelphia Fed survey from FRED, with publication lags</li>
+        </ul></div>
+        <div><h3>Simulation</h3><ul>
+          <li>Monthly rebalancing to target weights; costs charged on turnover</li>
+          <li>Sharpe ratio = average excess return over T-bills ÷ volatility, annualised</li>
+          <li>Forecast: stationary block bootstrap (average block 12 months), 2,000 paths, fixed seed</li>
+          <li>Sector names approximate Ken French SIC-based industries</li>
+        </ul></div>
+        <div><h3>Evidence</h3><ul>
+          <li>Four studies, each specified before its results were seen; p-values adjusted for multiple tests</li>
+          <li>Full code and findings: <a href="https://github.com/alperdroid/assetcorrelations/tree/claude/gracious-noether-kaqcdw" target="_blank" rel="noopener">alperdroid/assetcorrelations</a></li>
+        </ul></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">Historical simulations for research and education only. Not investment advice. Past performance, simulated or real, does not guarantee future results; backtests ignore taxes and benefit from hindsight. Data <span id="dataRange"></span>.</div></footer>
+
+<script>
+const DATA = /*__DATA__*/null;
+(() => {
+'use strict';
+const S = DATA.series, N = S.MKT.length, SECT = DATA.sectors;
+const [y0, m0] = DATA.start.split('-').map(Number);
+const ym = i => { const t = (m0 - 1) + i; return `${y0 + Math.floor(t / 12)}-${String(t % 12 + 1).padStart(2, '0')}`; };
+const idx = s => { const [y, m] = s.split('-').map(Number); return (y - y0) * 12 + (m - m0); };
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const nice = i => { const s = ym(i).split('-'); return `${MON[+s[1] - 1]} ${s[0]}`; };
+const LAST = N - 1;
+const SECNAME = { NoDur: 'Consumer staples', Durbl: 'Autos & durables', Manuf: 'Industrials', Enrgy: 'Energy', Chems: 'Materials', BusEq: 'Tech', Telcm: 'Telecom & media', Utils: 'Utilities', Shops: 'Retail', Hlth: 'Health care', Money: 'Financials', Other: 'Other' };
+const ASSET = { MKT: 'US stocks', UST10: '10y Treasuries', GOLD: 'Gold', RF: 'Cash (T-bills)' };
+const COST = k => k === 'UST10' ? 5e-4 : k === 'GOLD' ? 15e-4 : k === 'RF' ? 0 : 10e-4;
+const pct = (v, d = 1) => (v >= 0 ? '+' : '') + (v * 100).toFixed(d) + '%';
+const pctU = (v, d = 1) => (v * 100).toFixed(d) + '%';
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------------- portfolio engine ---------------- */
+const PRESETS = {
+  core: { label: 'Core 1/3', w: { EQ: 1, UST10: 1, GOLD: 1, RF: 0 } },
+  cons: { label: 'Conservative', w: { EQ: 0.7, UST10: 0.7, GOLD: 0.7, RF: 0.9 } },
+  growth: { label: 'Growth 50/25/25', w: { EQ: 2, UST10: 1, GOLD: 1, RF: 0 } },
+  defensive: { label: 'Defensive core', w: { EQ: 1, UST10: 1, GOLD: 1, RF: 0 }, sleeve: { MKT: 80, Utils: 7, NoDur: 7, Hlth: 6 } },
+  sixty: { label: '60/40', w: { EQ: 3, UST10: 2, GOLD: 0, RF: 0 } },
+  stocks: { label: 'All stocks', w: { EQ: 1, UST10: 0, GOLD: 0, RF: 0 } },
+  golden: { label: 'Gold bug', w: { EQ: 1, UST10: 0, GOLD: 2, RF: 0 } },
+};
+const defSleeve = () => Object.fromEntries([['MKT', 100], ...SECT.map(s => [s, 0])]);
+const state = { w: { EQ: 33, UST10: 33, GOLD: 33, RF: 0 }, sleeve: defSleeve(), trend: false, costs: true, from: idx('1990-01'), to: LAST, preset: 'core', ep: '2022 inflation shock', heat: 'crisis', sel: 'Utils', rg: 'S', fcHist: 'full', horizon: 10, amount: 100000, real: false };
+
+function normW(w) { const t = w.EQ + w.UST10 + w.GOLD + w.RF; return t > 0 ? { EQ: w.EQ / t, UST10: w.UST10 / t, GOLD: w.GOLD / t, RF: w.RF / t } : { EQ: 0, UST10: 0, GOLD: 0, RF: 1 }; }
+function sleeveShares(sl) { const keys = Object.keys(sl).filter(k => sl[k] > 0); const t = keys.reduce((a, k) => a + sl[k], 0); return t > 0 ? keys.map(k => [k, sl[k] / t]) : [['MKT', 1]]; }
+const sleeveCache = new Map();
+function sleeveSeries(sh) { const key = JSON.stringify(sh); if (sleeveCache.has(key)) return sleeveCache.get(key); const out = new Float64Array(N); for (let t = 0; t < N; t++) { let s = 0; for (const [k, a] of sh) s += a * S[k][t]; out[t] = s; } sleeveCache.set(key, out); return out; }
+function trendPass(series, t) { if (t < 12) return true; let a = 0, b = 0; for (let j = t - 12; j < t; j++) { a += Math.log1p(series[j]); b += Math.log1p(S.RF[j]); } return a > b; }
+
+/* cfg: {w (normalised), sleeve shares, trend, costs} -> monthly returns over [from, to] */
+function simulate(cfg, from, to) {
+  const sh = cfg.sh, eqS = sleeveSeries(sh);
+  const keys = [...sh.map(x => x[0]), 'UST10', 'GOLD', 'RF'];
+  const ret = new Float64Array(to - from + 1), cash = new Float64Array(to - from + 1);
+  let prev = null;
+  for (let t = from; t <= to; t++) {
+    let wE = cfg.w.EQ, wU = cfg.w.UST10, wG = cfg.w.GOLD, wC = cfg.w.RF;
+    if (cfg.trend) {
+      if (!trendPass(eqS, t)) { wC += wE; wE = 0; }
+      if (!trendPass(S.UST10, t)) { wC += wU; wU = 0; }
+      if (!trendPass(S.GOLD, t)) { wC += wG; wG = 0; }
+    }
+    const tw = [...sh.map(x => wE * x[1]), wU, wG, wC];
+    let cost = 0;
+    if (prev && cfg.costs) for (let k = 0; k < keys.length; k++) cost += Math.abs(tw[k] - prev[k]) * COST(keys[k]);
+    let g = 0; const grown = new Array(keys.length); let tot = 0;
+    for (let k = 0; k < keys.length; k++) { const r = S[keys[k]][t]; g += tw[k] * r; grown[k] = tw[k] * (1 + r); tot += grown[k]; }
+    ret[t - from] = g - cost; cash[t - from] = wC;
+    prev = grown.map(x => x / tot);
+  }
+  return { r: ret, cash };
+}
+function stats(r, from) {
+  const n = r.length; if (!n) return null;
+  let w = 1, peak = 1, mdd = 0, worst = Infinity, sum = 0, sumx = 0, uw = 0, maxuw = 0, ddPath = new Float64Array(n), wealth = new Float64Array(n);
+  for (let i = 0; i < n; i++) { w *= 1 + r[i]; wealth[i] = w; if (w >= peak) { peak = w; uw = 0; } else { uw++; maxuw = Math.max(maxuw, uw); } const dd = w / peak - 1; ddPath[i] = dd; mdd = Math.min(mdd, dd); worst = Math.min(worst, r[i]); sum += r[i]; sumx += r[i] - S.RF[from + i]; }
+  const mean = sum / n; let v = 0; for (let i = 0; i < n; i++) v += (r[i] - mean) ** 2; const sd = Math.sqrt(v / Math.max(1, n - 1));
+  return { cagr: w ** (12 / n) - 1, vol: sd * Math.sqrt(12), sharpe: sd > 0 ? (sumx / n) / sd * Math.sqrt(12) : 0, mdd, worst, uw: maxuw, wealth, dd: ddPath, final: w };
+}
+const CORE = { w: { EQ: 1 / 3, UST10: 1 / 3, GOLD: 1 / 3, RF: 0 }, sh: [['MKT', 1]], trend: false, costs: true };
+const SIXTY = { w: { EQ: .6, UST10: .4, GOLD: 0, RF: 0 }, sh: [['MKT', 1]], trend: false, costs: true };
+const youCfg = () => ({ w: normW(state.w), sh: sleeveShares(state.sleeve), trend: state.trend, costs: state.costs });
+
+/* ---------------- charts ---------------- */
+function niceStep(range, target) { const raw = range / target, p = 10 ** Math.floor(Math.log10(raw)), f = raw / p; return (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * p; }
+function yearTicks(a, b) { const span = (b - a) / 12; const step = span > 40 ? 10 : span > 18 ? 5 : span > 8 ? 2 : span > 2.5 ? 1 : 0; const out = []; if (!step) { for (let i = a; i <= b; i++) if (i === a || (i - a) % Math.max(1, Math.round((b - a) / 5)) === 0) out.push([i, nice(i)]); return out; } for (let i = a; i <= b; i++) { const s = ym(i); const y = +s.slice(0, 4); if (s.endsWith('-01') && y % step === 0) out.push([i, String(y)]); } return out; }
+function lineChart(host, o) {
+  const W = Math.max(280, host.clientWidth), H = o.height || 280, m = { l: 54, r: 14, t: 10, b: 26 };
+  o.series.forEach(se => { se.values = Array.from(se.values); }); (o.bands || []).forEach(b => { b.lo = Array.from(b.lo); b.hi = Array.from(b.hi); });
+  const n = o.n, all = []; o.series.forEach(s => s.values.forEach(v => all.push(v))); (o.bands || []).forEach(b => { b.lo.forEach(v => all.push(v)); b.hi.forEach(v => all.push(v)); });
+  const f = o.log ? Math.log : (v => v);
+  let lo = Math.min(...all.map(f)), hi = Math.max(...all.map(f)); if (o.zeroTop) hi = 0; if (o.includeZero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+  if (hi - lo < 1e-9) { hi += .01; lo -= .01; } const pad = (hi - lo) * .06; lo -= o.zeroTop ? pad : pad; if (!o.zeroTop) hi += pad;
+  const X = i => m.l + (n > 1 ? i / (n - 1) : .5) * (W - m.l - m.r), Y = v => m.t + (1 - (f(v) - lo) / (hi - lo)) * (H - m.t - m.b);
+  let ticks = [];
+  if (o.log) { const a = Math.exp(lo), b = Math.exp(hi); const cand = []; for (let e = -3; e <= 12; e++) for (const k of [1, 2, 5]) cand.push(k * 10 ** e / (o.logBase || 1)); ticks = cand.filter(v => v >= a && v <= b); if (ticks.length > 7) ticks = ticks.filter((_, i) => i % 2 === 0); if (ticks.length < 2) ticks = [a, b]; }
+  else { const st = niceStep(hi - lo, 5); for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-12; v += st) ticks.push(+v.toFixed(10)); }
+  const xt = o.xTicks || [];
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${o.label}">`;
+  s += '<g class="grid">' + ticks.map(v => `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${m.l - 8}" y="${Y(v) + 4}" text-anchor="end">${o.fmtY(v)}</text>`).join('') + '</g>';
+  s += xt.map(([i, l]) => `<text x="${X(i)}" y="${H - 6}" text-anchor="middle">${l}</text>`).join('');
+  if (o.refLine != null) s += `<line class="zero" x1="${m.l}" x2="${W - m.r}" y1="${Y(o.refLine)}" y2="${Y(o.refLine)}" stroke-dasharray="3 3"/>`;
+  (o.bands || []).forEach(b => { const pts = b.hi.map((v, i) => `${X(i)},${Y(v)}`).concat(b.lo.map((v, i) => `${X(i)},${Y(v)}`).reverse()); s += `<polygon points="${pts.join(' ')}" fill="${b.color}" fill-opacity="${b.op}"/>`; });
+  o.series.forEach(se => {
+    const d = se.values.map((v, i) => `${i ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join('');
+    if (se.area) s += `<path d="${d}L${X(n - 1)},${Y(o.areaBase ?? 0)}L${X(0)},${Y(o.areaBase ?? 0)}Z" fill="${se.color}" fill-opacity=".14"/>`;
+    s += `<path class="line" d="${d}" fill="none" stroke="${se.color}" stroke-width="${se.width || 1.6}" ${se.dash ? 'stroke-dasharray="5 4"' : ''} stroke-linejoin="round" stroke-linecap="round"/>`;
+  });
+  s += `<line id="cx" y1="${m.t}" y2="${H - m.b}" stroke="var(--faint)" stroke-width="1" opacity="0"/>`;
+  s += o.series.map((se, k) => `<circle class="hd" data-k="${k}" r="4" fill="${se.color}" stroke="var(--surface)" stroke-width="2" opacity="0"/>`).join('');
+  s += `<rect x="${m.l}" y="${m.t}" width="${W - m.l - m.r}" height="${H - m.t - m.b}" fill="transparent" class="hit"/></svg><div class="tip"></div>`;
+  host.innerHTML = s; host.classList.toggle('draw', !!o.animate && !reduce);
+  if (o.animate) host.querySelectorAll('path.line').forEach(p => p.style.setProperty('--len', Math.ceil(p.getTotalLength()) + 1));
+  const svg = host.querySelector('svg'), tip = host.querySelector('.tip'), cx = host.querySelector('#cx'), dots = host.querySelectorAll('.hd');
+  const move = ev => {
+    const r = svg.getBoundingClientRect(), sx = (ev.clientX - r.left) * W / r.width;
+    const i = Math.max(0, Math.min(n - 1, Math.round((sx - m.l) / (W - m.l - m.r) * (n - 1))));
+    cx.setAttribute('x1', X(i)); cx.setAttribute('x2', X(i)); cx.setAttribute('opacity', 1);
+    dots.forEach(d => { const se = o.series[+d.dataset.k]; d.setAttribute('cx', X(i)); d.setAttribute('cy', Y(se.values[i])); d.setAttribute('opacity', 1); });
+    tip.innerHTML = `<div class="mono" style="margin-bottom:4px">${o.xLabel(i)}</div>` + o.series.map(se => `<div class="row"><span><i style="background:${se.color}"></i>${se.name}</span><b>${o.fmtT(se.values[i])}</b></div>`).join('') + (o.extraTip ? o.extraTip(i) : '');
+    const px = X(i) / W * r.width; tip.style.opacity = 1; tip.style.top = '8px'; tip.style.left = (px > r.width * .6 ? px - tip.offsetWidth - 12 : px + 12) + 'px';
+  };
+  const out = () => { tip.style.opacity = 0; cx.setAttribute('opacity', 0); dots.forEach(d => d.setAttribute('opacity', 0)); };
+  svg.addEventListener('pointermove', move); svg.addEventListener('pointerleave', out);
+}
+
+/* ---------------- build section ---------------- */
+const ASSETS4 = [['EQ', 'Stocks', 'var(--eq)'], ['UST10', 'Treasuries', 'var(--ust)'], ['GOLD', 'Gold', 'var(--gold)'], ['RF', 'Cash', 'var(--cash)']];
+function chipGroup(host, items, current, onPick) {
+  host.innerHTML = items.map(([k, l]) => `<button class="chip" type="button" data-k="${k}" aria-pressed="${k === current}">${l}</button>`).join('');
+  host.onclick = e => { const b = e.target.closest('.chip'); if (!b) return; host.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c === b)); onPick(b.dataset.k); };
+}
+function setPressed(host, k) { host.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.k === k)); }
+function buildControls() {
+  chipGroup($('presets'), Object.entries(PRESETS).map(([k, p]) => [k, p.label]), state.preset, k => applyPreset(k));
+  $('assetSliders').innerHTML = ASSETS4.map(([k, l, c]) => `<div class="slider"><label for="w_${k}"><span class="sw" style="background:${c}"></span>${l}</label><input type="range" id="w_${k}" min="0" max="100" step="1" value="${state.w[k]}"><output id="o_${k}" for="w_${k}"></output></div>`).join('');
+  ASSETS4.forEach(([k]) => $('w_' + k).addEventListener('input', e => { state.w[k] = +e.target.value; state.preset = null; setPressed($('presets'), null); schedule(); }));
+  $('sectorSliders').innerHTML = [['MKT', 'Whole market'], ...SECT.map(s => [s, SECNAME[s]])].map(([k, l]) => `<div class="slider"><label for="s_${k}">${l}</label><input type="range" id="s_${k}" min="0" max="100" step="1" value="${state.sleeve[k]}"><output id="so_${k}" for="s_${k}"></output></div>`).join('');
+  ['MKT', ...SECT].forEach(k => $('s_' + k).addEventListener('input', e => { state.sleeve[k] = +e.target.value; state.preset = null; setPressed($('presets'), null); schedule(); }));
+  $('trend').onchange = e => { state.trend = e.target.checked; schedule(); };
+  $('costs').onchange = e => { state.costs = e.target.checked; schedule(); };
+  const P = [['1973', '1973–2026'], ['1990', '1990–2026'], ['2000', '2000–2026'], ['2010', '2010–2026'], ['2020', '2020–2026']];
+  chipGroup($('periods'), P, '1990', k => { state.from = idx(k + '-01'); state.to = LAST; syncRange(); schedule(); });
+  const years = []; for (let y = +DATA.start.slice(0, 4); y <= +DATA.end.slice(0, 4); y++) years.push(y);
+  $('fromY').innerHTML = years.map(y => `<option>${y}</option>`).join(''); $('toY').innerHTML = years.map(y => `<option>${y}</option>`).join('');
+  $('fromY').onchange = () => { state.from = Math.max(0, idx($('fromY').value + '-01')); if (state.to - state.from < 12) state.to = Math.min(LAST, state.from + 12); setPressed($('periods'), null); syncRange(); schedule(); };
+  $('toY').onchange = () => { const y = +$('toY').value; state.to = Math.min(LAST, idx(y + '-12')); if (state.to - state.from < 12) state.from = Math.max(0, state.to - 12); setPressed($('periods'), null); syncRange(); schedule(); };
+  syncRange();
+}
+function syncRange() { $('fromY').value = ym(state.from).slice(0, 4); $('toY').value = ym(state.to).slice(0, 4); }
+function applyPreset(k) {
+  const p = PRESETS[k]; state.preset = k; const t = p.w.EQ + p.w.UST10 + p.w.GOLD + p.w.RF;
+  ASSETS4.forEach(([a]) => { state.w[a] = Math.round(p.w[a] / t * 100); $('w_' + a).value = state.w[a]; });
+  state.sleeve = defSleeve(); if (p.sleeve) { state.sleeve.MKT = 0; Object.assign(state.sleeve, p.sleeve); $('sleeveBox').open = true; }
+  ['MKT', ...SECT].forEach(s => $('s_' + s).value = state.sleeve[s]);
+  schedule();
+}
+function allocHTML(nw) { return ASSETS4.map(([k, , c]) => `<span style="width:${(nw[k] * 100).toFixed(2)}%;background:${c}" title="${k}"></span>`).join(''); }
+
+let pending = false;
+function schedule() { if (pending) return; pending = true; requestAnimationFrame(() => { pending = false; renderAll(); }); }
+
+let cache = {};
+function renderBuild() {
+  const nw = normW(state.w);
+  ASSETS4.forEach(([k]) => $('o_' + k).textContent = Math.round(nw[k] * 100) + '%');
+  const sh = Object.fromEntries(sleeveShares(state.sleeve)); ['MKT', ...SECT].forEach(k => $('so_' + k).textContent = Math.round((sh[k] || 0) * 100) + '%');
+  $('allocBar').innerHTML = allocHTML(nw); $('miniAlloc').innerHTML = allocHTML(nw);
+  $('allocLegend').innerHTML = ASSETS4.map(([k, l, c]) => `<span><i style="background:${c}"></i>${l} ${Math.round(nw[k] * 100)}%</span>`).join('');
+  const { from, to } = state;
+  const you = simulate(youCfg(), from, to), core = simulate(CORE, from, to), six = simulate(SIXTY, from, to);
+  const sy = stats(you.r, from), sc = stats(core.r, from), s6 = stats(six.r, from);
+  cache = { you, sy, sc, s6 };
+  const tile = (k, v, d, good, fmt) => `<div class="tile"><span class="k">${k}</span><span class="v num">${v}</span><span class="d ${good === null ? 'flat' : good ? 'good' : 'bad'}">${d}</span></div>`;
+  const dv = (a, b, hiGood, f) => { const x = a - b; const g = Math.abs(x) < 1e-9 ? null : (hiGood ? x > 0 : x < 0); return [f(x) + ' vs core', g]; };
+  const T = [
+    ['Annual return', pct(sy.cagr), ...dv(sy.cagr, sc.cagr, true, v => pct(v))],
+    ['Volatility', pctU(sy.vol), ...dv(sy.vol, sc.vol, false, v => pct(v))],
+    ['Sharpe ratio', sy.sharpe.toFixed(2), ...dv(sy.sharpe, sc.sharpe, true, v => (v >= 0 ? '+' : '') + v.toFixed(2))],
+    ['Worst drawdown', pctU(sy.mdd), ...dv(sy.mdd, sc.mdd, true, v => pct(v))],
+    ['Worst month', pctU(sy.worst), ...dv(sy.worst, sc.worst, true, v => pct(v))],
+    ['Longest underwater', sy.uw + ' mo', ...dv(sy.uw, sc.uw, false, v => (v >= 0 ? '+' : '') + v + ' mo')],
+  ];
+  $('tiles').innerHTML = T.map(t => tile(t[0], t[1], t[2], t[3])).join('');
+  $('miniStats').textContent = `${pct(sy.cagr)}/yr · worst ${pctU(sy.mdd)}`;
+  const n = to - from + 1, xt = yearTicks(from, to).map(([i, l]) => [i - from, l]);
+  $('wealthTitle').textContent = `Growth of $1, ${nice(from)} to ${nice(to)}`;
+  lineChart($('wealthChart'), { n, log: true, height: 280, label: 'Growth of one dollar', xTicks: xt, fmtY: v => '$' + (v >= 10 ? v.toFixed(0) : v >= 1 ? v.toFixed(v % 1 ? 1 : 0) : v.toFixed(2)), fmtT: v => '$' + v.toFixed(2), xLabel: i => nice(from + i), refLine: 1, animate: true,
+    series: [{ name: '60/40', values: s6.wealth, color: 'var(--ref-2)', dash: true }, { name: 'Core 1/3', values: sc.wealth, color: 'var(--ref)' }, { name: 'Your mix', values: sy.wealth, color: 'var(--you)', width: 2.6 }],
+    extraTip: state.trend ? (i => `<div class="row muted"><span>Your cash weight</span><b>${Math.round(you.cash[i] * 100)}%</b></div>`) : null });
+  lineChart($('ddChart'), { n, height: 170, zeroTop: true, label: 'Drawdown from previous peak', xTicks: xt, fmtY: v => Math.round(v * 100) + '%', fmtT: v => pctU(v), xLabel: i => nice(from + i), areaBase: 0,
+    series: [{ name: '60/40', values: s6.dd, color: 'var(--ref-2)', dash: true }, { name: 'Core 1/3', values: sc.dd, color: 'var(--ref)' }, { name: 'Your mix', values: sy.dd, color: 'var(--you)', width: 2.2, area: true }] });
+  const vs = sy.mdd - sc.mdd;
+  const ddIdx = sy.dd.indexOf(Math.min(...sy.dd));
+  $('verdict').innerHTML = `Your mix's worst loss from a peak was <b>${pctU(sy.mdd)}</b>, bottoming in ${nice(from + ddIdx)}. That is ${Math.abs(vs) < 0.005 ? 'about the same as' : vs > 0 ? `${(vs * 100).toFixed(1)} points shallower than` : `${(-vs * 100).toFixed(1)} points deeper than`} the core 1/3 mix and ${sy.mdd > s6.mdd ? `${((sy.mdd - s6.mdd) * 100).toFixed(1)} points shallower than` : `${((s6.mdd - sy.mdd) * 100).toFixed(1)} points deeper than`} 60/40.` + (state.trend ? ` The trend overlay held ${Math.round(you.cash.reduce((a, b) => a + b, 0) / you.cash.length * 100)}% cash on average.` : '');
+}
+
+/* ---------------- crises ---------------- */
+const EPIS = [
+  ['1973-74 oil shock', '1973-01', '1974-09', 'Oil embargo and double-digit inflation; US stocks nearly halved.'],
+  ['1980-82 Volcker tightening', '1980-01', '1982-07', 'Interest rates near 20% to break inflation; gold\'s 1980 bubble burst.'],
+  ['1987 crash', '1987-09', '1987-11', 'Black Monday: US stocks fell more than 20% in a single day.'],
+  ['1990 Gulf war recession', '1990-07', '1990-10', 'Iraq invades Kuwait; oil spikes and the US slips into recession.'],
+  ['1998 LTCM', '1998-07', '1998-09', 'Russia defaults and the hedge fund LTCM nearly collapses.'],
+  ['2000-02 dot-com bust', '2000-09', '2002-09', 'The tech bubble deflates through recession and 9/11.'],
+  ['2007-09 GFC', '2007-11', '2009-02', 'Housing collapse and a global banking crisis.'],
+  ['2020 Covid crash', '2020-02', '2020-03', 'Pandemic lockdowns trigger one of the fastest sell-offs on record.'],
+  ['2022 inflation shock', '2022-01', '2022-10', 'Inflation peaks near 9%; stocks and bonds fall together.'],
+  ['2025 tariff shock', '2025-02', '2025-04', 'Tariff announcements spark a sharp sell-off in early April.'],
+];
+const RGNAME = { G: 'Goldilocks', R: 'Reflation', S: 'Stagflation', D: 'Disinflationary slowdown', '-': 'n/a' };
+let replayTimer = null;
+function renderCrisis(playTo) {
+  const e = EPIS.find(x => x[0] === state.ep) || EPIS[8]; const a = idx(e[1]), b = idx(e[2]);
+  const pre = Math.max(0, a - 1);
+  const cum = cfg => { const r = simulate(cfg, a, b).r; let w = 1; const out = [0]; for (const x of r) { w *= 1 + x; out.push(w - 1); } return out; };
+  const you = cum(youCfg()), core = cum(CORE), six = cum(SIXTY);
+  const n = you.length, upto = playTo == null ? n : playTo;
+  $('epName').textContent = e[0]; $('epWhen').textContent = `${nice(a)} – ${nice(b)} · ${b - a + 1} months · regime at start: ${RGNAME[DATA.regime[a]]}`; $('epDesc').textContent = e[3];
+  const lab = i => i === 0 ? `Start (${nice(pre)} close)` : nice(a + i - 1);
+  const xt = n <= 8 ? [...Array(n).keys()].filter(i => i > 0).map(i => [i, MON[+ym(a + i - 1).slice(5) - 1]]) : yearTicks(a, b).map(([i, l]) => [i - a + 1, l]);
+  const cut = v => v.slice(0, Math.max(2, upto));
+  lineChart($('epChart'), { n: Math.max(2, upto), height: 240, label: 'Cumulative return through the episode', includeZero: true, xTicks: xt.filter(([i]) => i < upto), fmtY: v => Math.round(v * 100) + '%', fmtT: v => pct(v), xLabel: lab, refLine: 0,
+    series: [{ name: '60/40', values: cut(six), color: 'var(--ref-2)', dash: true }, { name: 'Core 1/3', values: cut(core), color: 'var(--ref)' }, { name: 'Your mix', values: cut(you), color: 'var(--you)', width: 2.6 }] });
+  $('epClock').textContent = playTo == null ? '' : lab(Math.min(n, upto) - 1);
+  if (playTo != null) return;
+  const tot = k => { let w = 1; for (let t = a; t <= b; t++) w *= 1 + S[k][t]; return w - 1; };
+  const rows = [['Your mix', you.at(-1), 'you'], ['Core 1/3', core.at(-1), 'ref'], ['60/40', six.at(-1), 'ref'],
+    ...['MKT', 'UST10', 'GOLD', 'RF'].map(k => [ASSET[k], tot(k), 'asset', k]), ...SECT.map(k => [SECNAME[k], tot(k), 'sector', k]).sort((x, y) => y[1] - x[1])];
+  const mx = Math.max(...rows.map(r => Math.abs(r[1])), .01), zero = rows.some(r => r[1] < 0) ? (Math.max(0, -Math.min(...rows.map(r => r[1]))) / (mx + Math.max(0, Math.max(...rows.map(r => r[1])))) ) : 0;
+  const lo = Math.min(0, ...rows.map(r => r[1])), hi = Math.max(0, ...rows.map(r => r[1])), span = hi - lo || 1;
+  const P = v => (v - lo) / span * 100;
+  const col = r => r[2] === 'you' ? 'var(--you)' : r[2] === 'ref' ? 'var(--ref)' : r[3] === 'MKT' ? 'var(--eq)' : r[3] === 'UST10' ? 'var(--ust)' : r[3] === 'GOLD' ? 'var(--gold)' : r[3] === 'RF' ? 'var(--cash)' : 'color-mix(in oklab, var(--eq) 40%, var(--surface-2))';
+  $('epBars').innerHTML = rows.map((r, i) => `<div class="b ${r[2] === 'you' ? 'you' : ''} ${i === 3 || i === 7 ? 'sep' : ''}"><span class="lab" title="${r[0]}">${r[0]}</span><span class="track"><span class="z" style="left:${P(0)}%"></span><span class="fill" style="left:${P(Math.min(0, r[1]))}%;width:${Math.abs(r[1]) / span * 100}%;background:${col(r)}"></span></span><span class="val">${pct(r[1])}</span></div>`).join('');
+}
+function play() {
+  clearInterval(replayTimer); const e = EPIS.find(x => x[0] === state.ep); const n = idx(e[2]) - idx(e[1]) + 2; let k = 2;
+  if (reduce) { renderCrisis(); return; }
+  renderCrisis(k); replayTimer = setInterval(() => { k++; if (k > n) { clearInterval(replayTimer); renderCrisis(); return; } renderCrisis(k); }, Math.max(60, Math.min(450, 4000 / n)));
+}
+
+/* ---------------- sectors ---------------- */
+function corr(a, b) { const n = a.length; let ma = 0, mb = 0; for (let i = 0; i < n; i++) { ma += a[i]; mb += b[i]; } ma /= n; mb /= n; let c = 0, va = 0, vb = 0; for (let i = 0; i < n; i++) { const x = a[i] - ma, y = b[i] - mb; c += x * y; va += x * x; vb += y * y; } return c / Math.sqrt(va * vb); }
+const sl = (k, a, b) => S[k].slice(a, b + 1);
+function heatCell(v, mode) {
+  if (v == null || isNaN(v)) return '<td></td>';
+  let c, t;
+  if (mode === 'crisis') { const s = Math.min(1, Math.abs(v) / .5); c = `color-mix(in oklab, var(${v >= 0 ? '--pos' : '--neg'}) ${Math.round(8 + s * 62)}%, var(--surface))`; t = pct(v, 0); }
+  else if (mode === 'bond') { const s = Math.min(1, Math.abs(v) / .6); c = `color-mix(in oklab, var(${v < 0 ? '--eq' : '--neg'}) ${Math.round(6 + s * 60)}%, var(--surface))`; t = (v >= 0 ? '+' : '') + v.toFixed(2); }
+  else { const s = Math.min(1, Math.abs(v - 1) / .7); c = `color-mix(in oklab, var(${v < 1 ? '--pos' : '--neg'}) ${Math.round(6 + s * 60)}%, var(--surface))`; t = v.toFixed(2); }
+  return `<td style="background:${c}">${t}</td>`;
+}
+const DECADES = [['1972-79', '1972-01', '1979-12'], ['1980s', '1980-01', '1989-12'], ['1990s', '1990-01', '1999-12'], ['2000s', '2000-01', '2009-12'], ['2010s', '2010-01', '2019-12'], ['2020-26', '2020-01', DATA.end]];
+function downCap(k, a, b) { let s = 0, sm = 0, n = 0; for (let t = a; t <= b; t++) if (S.MKT[t] < 0) { s += S[k][t]; sm += S.MKT[t]; n++; } return s / sm; }
+function beta(k, a, b) { const x = sl('MKT', a, b), y = sl(k, a, b); const mx = x.reduce((p, q) => p + q, 0) / x.length, my = y.reduce((p, q) => p + q, 0) / y.length; let c = 0, v = 0; for (let i = 0; i < x.length; i++) { c += (x[i] - mx) * (y[i] - my); v += (x[i] - mx) ** 2; } return c / v; }
+function crisisCount(k) { let beat = 0, top = 0; EPIS.forEach(e => { const a = idx(e[1]), b = idx(e[2]); const tot = q => { let w = 1; for (let t = a; t <= b; t++) w *= 1 + S[q][t]; return w - 1; }; const v = tot(k); if (v > tot('MKT')) beat++; }); return beat; }
+function renderHeat() {
+  const mode = state.heat, rows = [...SECT.map(k => [k, SECNAME[k]]), ['sep'], ['MKT', 'US stocks'], ['UST10', '10y Treasuries'], ['GOLD', 'Gold']];
+  let cols, val;
+  if (mode === 'crisis') { cols = EPIS.map(e => e[0].replace(/ (oil shock|Volcker tightening|crash|Gulf war recession|LTCM|dot-com bust|GFC|Covid crash|inflation shock|tariff shock)/, m => '<br>' + m.trim())); val = (k, j) => { const a = idx(EPIS[j][1]), b = idx(EPIS[j][2]); let w = 1; for (let t = a; t <= b; t++) w *= 1 + S[k][t]; return w - 1; }; }
+  else if (mode === 'bond') { cols = DECADES.map(d => d[0]); val = (k, j) => k === 'UST10' ? null : corr(sl(k, idx(DECADES[j][1]), idx(DECADES[j][2])), sl('UST10', idx(DECADES[j][1]), idx(DECADES[j][2]))); }
+  else { cols = ['Down capture<br>1972–89', 'Down capture<br>1990–2026', 'Beta<br>1972–89', 'Beta<br>1990–2026']; val = (k, j) => { if (k === 'MKT') return 1; const [a, b] = j % 2 === 0 ? [0, idx('1989-12')] : [idx('1990-01'), LAST]; return j < 2 ? downCap(k, a, b) : beta(k, a, b); }; }
+  $('heat').innerHTML = `<thead><tr><th></th>${cols.map(c => `<th>${c}</th>`).join('')}</tr></thead><tbody>` + rows.map(r => r[0] === 'sep' ? '<tr class="sep"><td colspan="' + (cols.length + 1) + '"></td></tr>' : `<tr data-k="${r[0]}" class="${r[0] === state.sel ? 'sel' : ''}"><td class="rowlab" tabindex="0">${r[1]}</td>${cols.map((_, j) => heatCell(val(r[0], j), mode)).join('')}</tr>`).join('') + '</tbody>';
+  renderSectorCard();
+}
+function renderSectorCard() {
+  const k = state.sel, name = SECNAME[k] || ASSET[k], a2 = idx('1990-01');
+  const st = stats(sl(k, a2, LAST), a2);
+  const isSec = SECT.includes(k);
+  $('sectorCard').innerHTML = `<div class="eyebrow">Profile since 1990</div><h3 style="font-size:1.4rem">${name}</h3>
+    <div class="kv"><span>Annual return</span><span>${pct(st.cagr)}</span><span>Volatility</span><span>${pctU(st.vol)}</span><span>Worst drawdown</span><span>${pctU(st.mdd)}</span>
+    ${k !== 'MKT' ? `<span>Down capture (1 = falls like the market)</span><span>${downCap(k, a2, LAST).toFixed(2)}</span><span>Crises it beat the market</span><span>${crisisCount(k)} of 10</span>` : ''}
+    <span>Correlation with Treasuries, 2020–26</span><span>${k === 'UST10' ? '1.00' : corr(sl(k, idx('2020-01'), LAST), sl('UST10', idx('2020-01'), LAST)).toFixed(2)}</span></div>
+    ${isSec ? `<button class="btn" type="button" id="tiltBtn">Tilt my stock sleeve +10 points toward ${name}</button><p class="muted" style="font-size:.8rem">Opens the sector sliders in Build. The study suggests keeping tilts modest: defensiveness persists, sector winners do not.</p>` : '<p class="muted" style="font-size:.85rem">Pick a sector row to tilt your stock sleeve toward it.</p>'}`;
+  const tb = $('tiltBtn'); if (tb) tb.onclick = () => { const tot = ['MKT', ...SECT].reduce((s, q) => s + state.sleeve[q], 0) || 100; state.sleeve[k] += Math.round(tot * 10 / 90); $('s_' + k).value = Math.min(100, state.sleeve[k]); state.preset = null; setPressed($('presets'), null); $('sleeveBox').open = true; schedule(); tb.textContent = 'Added: see Build'; };
+}
+
+/* ---------------- regimes ---------------- */
+function renderStrip() {
+  const host = $('strip'), W = Math.max(300, host.clientWidth), H = 64, m = 4, bw = (W - 2 * m) / N;
+  let s = `<svg viewBox="0 0 ${W} ${H + 18}" role="img" aria-label="Real-time regime by month, ${DATA.start} to ${DATA.end}">`;
+  let run = 0;
+  for (let t = 1; t <= N; t++) { if (t === N || DATA.regime[t] !== DATA.regime[run]) { const r = DATA.regime[run]; s += `<rect x="${m + run * bw}" y="${r === state.rg ? 0 : 14}" width="${(t - run) * bw + .3}" height="${r === state.rg ? H : H - 28}" fill="${r === '-' ? 'var(--surface-2)' : `var(--rg-${r})`}" opacity="${r === state.rg ? 1 : .35}"><title>${RGNAME[r]}: ${nice(run)} – ${nice(t - 1)}</title></rect>`; run = t; } }
+  for (let y = 1975; y <= 2025; y += 5) { const i = idx(y + '-01'); s += `<text x="${m + i * bw}" y="${H + 14}" text-anchor="middle">${y}</text>`; }
+  host.innerHTML = s + '</svg>';
+}
+function sharpeIn(k, a, b, reg) { let n = 0, sx = 0, s = 0; const v = []; for (let t = a; t <= b; t++) if (DATA.regime[t] === reg) { v.push(S[k][t]); sx += S[k][t] - S.RF[t]; s += S[k][t]; n++; } if (n < 6) return NaN; const m = s / n; const sd = Math.sqrt(v.reduce((p, x) => p + (x - m) ** 2, 0) / (n - 1)); return sx / n / sd * Math.sqrt(12); }
+function rankCorr(a, b) { const rk = x => { const o = x.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]); const r = new Array(x.length); o.forEach((p, i) => r[p[1]] = i); return r; }; return corr(rk(a), rk(b)); }
+function renderRegime() {
+  renderStrip();
+  chipGroup($('rgKey'), ['G', 'R', 'S', 'D'].map(r => [r, `<i style="background:var(--rg-${r})"></i>${RGNAME[r]}`]), state.rg, k => { state.rg = k; renderRegime(); });
+  const keys = [...SECT, 'UST10', 'GOLD'], e1 = idx('1989-12'), a2 = idx('1990-01');
+  const A = keys.map(k => sharpeIn(k, 0, e1, state.rg)), B = keys.map(k => sharpeIn(k, a2, LAST, state.rg));
+  const order = keys.map((k, i) => i).sort((i, j) => A[j] - A[i]);
+  const lo = Math.min(0, ...A, ...B), hi = Math.max(0, ...A, ...B), span = hi - lo, P = v => (v - lo) / span * 100;
+  const months = (a, b) => { let n = 0; for (let t = a; t <= b; t++) if (DATA.regime[t] === state.rg) n++; return n; };
+  $('pairTitle').textContent = `Sharpe ratio in ${RGNAME[state.rg]}: 1972–89 (light, ${months(0, e1)} months) vs 1990–2026 (dark, ${months(a2, LAST)} months)`;
+  $('pairs').style.setProperty('--rgc', `var(--rg-${state.rg})`);
+  $('pairs').innerHTML = order.map(i => `<div class="p"><span>${SECNAME[keys[i]] || ASSET[keys[i]]}</span><span class="tr"><span class="z" style="left:${P(0)}%"></span><span class="a" style="left:${P(Math.min(0, A[i]))}%;width:${Math.abs(A[i]) / span * 100}%"></span><span class="b2" style="left:${P(Math.min(0, B[i]))}%;width:${Math.abs(B[i]) / span * 100}%"></span></span><span class="vals">${A[i].toFixed(2)} → ${B[i].toFixed(2)}</span></div>`).join('');
+  const rc = rankCorr(A, B);
+  $('rankCorr').textContent = (rc >= 0 ? '+' : '') + rc.toFixed(2);
+  $('rankNote').textContent = Math.abs(rc) < .3 ? 'Close to zero: knowing the winners in this regime before 1990 told you almost nothing about the winners after.' : rc > 0 ? 'Some persistence, but with wide uncertainty.' : 'The ranking partly reversed between eras.';
+  const top = (arr) => arr.map((v, i) => [v, keys[i]]).sort((p, q) => q[0] - p[0]).slice(0, 3).map(x => SECNAME[x[1]] || ASSET[x[1]]).join(', ');
+  $('rgFacts').innerHTML = `<span>Top 3, 1972–89</span><span style="font-family:var(--font-body);text-align:right">${top(A)}</span><span>Top 3, 1990–2026</span><span style="font-family:var(--font-body);text-align:right">${top(B)}</span><span>Latest real-time label</span><span style="font-family:var(--font-body);text-align:right">${RGNAME[DATA.regime[LAST]]} (${nice(LAST)})</span>`;
+}
+
+/* ---------------- strategies ---------------- */
+const SNAME = { '60/40': '60/40', 'Static 1/3': 'Core 1/3', 'S1 Regime Tilt': 'Macro-regime tilt', 'S1 Uncond. Tilt': 'Tilt, no regimes (control)', 'S1 Regime ERC': 'Regime risk parity', 'S1 Uncond. ERC': 'Risk parity (control)', 'S2 H1 Bond-gold switch': 'Bond-to-gold switch', 'S2 H2a Trend, no cash': 'Trend, no cash', 'S2 H2b Trend sectors': 'Trend on sectors', 'S2 H3 Vol-managed equity': 'Vol-managed equity', 'S3 H4a Trend + cash': 'Trend + cash', 'S3 H4b Trend, cash fallback': 'Trend, cash as fallback' };
+const CARDS = [
+  ['Macro-regime tilt', 'Study 1', 'Not supported', '+0.45 pp a year vs its no-regime twin (p = 0.36); doubled Treasuries just before their 2022 slide.'],
+  ['Bond-to-gold switch', 'Study 2', 'Significantly worse', 'Sharpe 0.20 lower than core (adjusted p = 0.04); -39.6% in the 1980–82 gold crash.'],
+  ['Trend, no cash', 'Study 2', 'Not supported', 'Highest return, but 96% gold in 1974 and 100% Treasuries in mid-2022 (-28.3%).'],
+  ['Vol-managed equity', 'Studies 2–3', 'Not confirmed', 'Small US gain did not replicate: worse than core in all 4 international regions.'],
+  ['Trend + cash', 'Studies 3–4', 'Not supported', 'Drawdown roughly halved, but about 8 of the 9.7 points came from simply holding ~40% cash.'],
+  ['Sector rotation by regime', 'Sector study', 'Not supported', 'Sector winners by regime reshuffled after 1990 (rank correlations -0.07 to 0.10).'],
+];
+function renderStrategies() {
+  const host = $('scatter'), W = Math.max(300, host.clientWidth), H = 330, m = { l: 48, r: 16, t: 14, b: 40 };
+  const a2 = idx('1990-01'); const you = stats(simulate(youCfg(), a2, LAST).r, a2);
+  const pts = DATA.strategies.map(s => ({ name: SNAME[s.name] || s.name, dd: s.dd, sr: s.sr, kind: s.name === 'Static 1/3' ? 'core' : s.name === '60/40' ? 'ref' : 'rule' }));
+  pts.push({ name: 'Your mix', dd: you.mdd, sr: you.sharpe, kind: 'you' });
+  const xs = pts.map(p => p.dd), ys = pts.map(p => p.sr);
+  const x0 = Math.min(-0.35, Math.min(...xs) - .02), x1 = 0, ylo = Math.min(.5, Math.min(...ys) - .05), yhi = Math.max(1, Math.max(...ys) + .05);
+  const X = v => m.l + (v - x0) / (x1 - x0) * (W - m.l - m.r), Y = v => m.t + (1 - (v - ylo) / (yhi - ylo)) * (H - m.t - m.b);
+  const core = pts.find(p => p.kind === 'core');
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Worst drawdown versus Sharpe ratio for each strategy and your mix">`;
+  s += `<rect x="${X(core.dd)}" y="${m.t}" width="${X(0) - X(core.dd)}" height="${Y(core.sr) - m.t}" fill="var(--you)" fill-opacity=".06"/>`;
+  s += `<text x="${X(0) - 4}" y="${m.t + 14}" text-anchor="end">better than core on both</text>`;
+  const st = niceStep(yhi - ylo, 5); s += '<g class="grid">'; for (let v = Math.ceil(ylo / st) * st; v <= yhi; v += st) s += `<line x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"/><text x="${m.l - 6}" y="${Y(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`;
+  for (let v = Math.ceil(x0 * 10) / 10; v <= 0.0001; v += .1) s += `<line x1="${X(v)}" x2="${X(v)}" y1="${m.t}" y2="${H - m.b}"/><text x="${X(v)}" y="${H - m.b + 16}" text-anchor="middle">${Math.round(v * 100)}%</text>`;
+  s += '</g>';
+  s += `<line x1="${X(core.dd)}" x2="${X(core.dd)}" y1="${m.t}" y2="${H - m.b}" stroke="var(--faint)" stroke-dasharray="3 3"/><line x1="${m.l}" x2="${W - m.r}" y1="${Y(core.sr)}" y2="${Y(core.sr)}" stroke="var(--faint)" stroke-dasharray="3 3"/>`;
+  s += `<text x="${(m.l + W - m.r) / 2}" y="${H - 6}" text-anchor="middle">Worst drawdown (closer to 0% is better)</text><text x="${m.l}" y="${m.t - 2}">Sharpe ratio</text>`;
+  pts.sort((p, q) => (p.kind === 'you') - (q.kind === 'you')).forEach(p => {
+    const c = p.kind === 'you' ? 'var(--you)' : p.kind === 'core' ? 'var(--ref)' : 'var(--cash)';
+    const r = p.kind === 'you' ? 8 : p.kind === 'rule' ? 5 : 6.5;
+    s += `<circle cx="${X(p.dd)}" cy="${Y(p.sr)}" r="${r}" fill="${c}" stroke="var(--surface)" stroke-width="2"><title>${p.name}: worst drawdown ${pctU(p.dd)}, Sharpe ${p.sr.toFixed(2)}</title></circle>`;
+    const flip = X(p.dd) > W - 110;
+    if (p.kind !== 'rule') s += `<text x="${X(p.dd) + (flip ? -12 : p.kind === 'you' ? 12 : 10)}" text-anchor="${flip ? 'end' : 'start'}" y="${Y(p.sr) + (p.kind === 'core' ? 16 : 4)}" style="fill:var(--ink);font-family:var(--font-body);font-size:12px;font-weight:${p.kind === 'you' ? 600 : 400}">${p.name}</text>`;
+  });
+  host.innerHTML = s + '</svg>';
+  $('cards').innerHTML = CARDS.map(c => `<div class="card"><span class="tag ${c[2] === 'Significantly worse' ? 'bad' : ''}">${c[2]}</span><h3>${c[0]}</h3><p>${c[3]}</p><span class="n muted">${c[1]}</span></div>`).join('');
+}
+
+/* ---------------- forecast ---------------- */
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function renderForecast() {
+  const a = state.fcHist === 'full' ? idx('1973-01') : idx('1990-01');
+  const you = simulate(youCfg(), a, LAST).r, six = simulate(SIXTY, a, LAST).r;
+  const L = you.length, H = state.horizon * 12, P = 2000, rand = rng(20260101), defl = state.real ? 1 / 1.025 ** (1 / 12) : 1;
+  const ends = new Float64Array(P), ends6 = new Float64Array(P), mdds = new Float64Array(P), grid = new Float32Array(P * (H + 1)), grid6 = new Float32Array(P * (H + 1));
+  for (let p = 0; p < P; p++) {
+    let j = Math.floor(rand() * L), w = 1, w6 = 1, pk = 1, md = 0; grid[p * (H + 1)] = 1; grid6[p * (H + 1)] = 1;
+    for (let t = 1; t <= H; t++) { if (t > 1) j = rand() < 1 / 12 ? Math.floor(rand() * L) : (j + 1) % L; w *= (1 + you[j]) * defl; w6 *= (1 + six[j]) * defl; if (w > pk) pk = w; md = Math.min(md, w / pk - 1); grid[p * (H + 1) + t] = w; grid6[p * (H + 1) + t] = w6; }
+    ends[p] = w; ends6[p] = w6; mdds[p] = md;
+  }
+  const q = (arr, k) => { const s = Float64Array.from(arr).sort(); return s[Math.min(s.length - 1, Math.floor(k * s.length))]; };
+  const step = Math.max(1, Math.round(H / 120)), ts = []; for (let t = 0; t <= H; t += step) ts.push(t); if (ts.at(-1) !== H) ts.push(H);
+  const band = (g, k) => ts.map(t => { const col = new Float64Array(P); for (let p = 0; p < P; p++) col[p] = g[p * (H + 1) + t]; col.sort(); return col[Math.floor(k * (P - 1))]; });
+  const amt = state.amount;
+  const p5 = band(grid, .05), p25 = band(grid, .25), p50 = band(grid, .5), p75 = band(grid, .75), p95 = band(grid, .95), m6 = band(grid6, .5);
+  const sc = v => v.map(x => x * amt);
+  const fmt$ = v => v >= 1e6 ? '$' + (v / 1e6).toFixed(2) + 'M' : '$' + Math.round(v / 1000) + 'k';
+  $('fcTitle').textContent = `Range of outcomes over ${state.horizon} year${state.horizon > 1 ? 's' : ''}${state.real ? " (today's dollars)" : ''}`;
+  lineChart($('fcChart'), { n: ts.length, height: 300, label: 'Simulated range of portfolio values', fmtY: fmt$, fmtT: v => fmt$(v), xLabel: i => `Year ${(ts[i] / 12).toFixed(ts[i] % 12 ? 1 : 0)}`, refLine: amt,
+    xTicks: ts.map((t, i) => [i, t]).filter(([i, t]) => t % (state.horizon > 15 ? 60 : state.horizon > 5 ? 24 : 12) === 0).map(([i, t]) => [i, `yr ${t / 12}`]),
+    bands: [{ lo: sc(p5), hi: sc(p95), color: 'var(--you)', op: .12 }, { lo: sc(p25), hi: sc(p75), color: 'var(--you)', op: .22 }],
+    series: [{ name: '60/40 median', values: sc(m6), color: 'var(--ref-2)', dash: true }, { name: '95th pct', values: sc(p95), color: 'transparent' }, { name: 'Your median', values: sc(p50), color: 'var(--you)', width: 2.6 }, { name: '5th pct', values: sc(p5), color: 'transparent' }] });
+  const lossP = Array.from(ends).filter(v => v < 1).length / P, dd20 = Array.from(mdds).filter(v => v < -.2).length / P;
+  const tile = (k, v, d) => `<div class="tile"><span class="k">${k}</span><span class="v num">${v}</span><span class="d flat">${d}</span></div>`;
+  $('fcOut').innerHTML = tile('Median ending value', fmt$(q(ends, .5) * amt), `60/40: ${fmt$(q(ends6, .5) * amt)}`) + tile('Bad case (5th percentile)', fmt$(q(ends, .05) * amt), `60/40: ${fmt$(q(ends6, .05) * amt)}`) + tile('Chance of ending below start', pctU(lossP, 0), `${state.horizon}-year horizon`) + tile('Chance of a 20%+ drawdown', pctU(dd20, 0), `median worst: ${pctU(q(mdds, .5), 0)}`);
+}
+function buildForecastControls() {
+  chipGroup($('fcHist'), [['full', '1973–2026'], ['1990', '1990–2026']], state.fcHist, k => { state.fcHist = k; renderForecast(); });
+  $('horizon').oninput = e => { state.horizon = +e.target.value; $('horizonOut').textContent = state.horizon + ' yrs'; scheduleFc(); };
+  $('amount').onchange = e => { const v = +String(e.target.value).replace(/[^0-9.]/g, ''); state.amount = v > 0 ? v : 100000; e.target.value = state.amount.toLocaleString('en-US'); renderForecast(); };
+  $('real').onchange = e => { state.real = e.target.checked; renderForecast(); };
+}
+let fcPending = false; function scheduleFc() { if (fcPending) return; fcPending = true; requestAnimationFrame(() => { fcPending = false; renderForecast(); }); }
+
+/* ---------------- wiring ---------------- */
+function renderAll() { renderBuild(); renderCrisis(); renderStrategies(); scheduleFcLater(); }
+let fcT = null; function scheduleFcLater() { clearTimeout(fcT); fcT = setTimeout(renderForecast, 120); }
+function init() {
+  $('dataRange').textContent = `${nice(0)} – ${nice(LAST)}`;
+  buildControls(); buildForecastControls();
+  chipGroup($('episodes'), EPIS.map(e => [e[0], e[0]]), state.ep, k => { state.ep = k; clearInterval(replayTimer); renderCrisis(); });
+  $('play').onclick = play;
+  chipGroup($('heatModes'), [['crisis', 'Crisis returns'], ['bond', 'Correlation with Treasuries by decade'], ['defense', 'Defensiveness by era']], state.heat, k => { state.heat = k; renderHeat(); });
+  $('heat').addEventListener('click', e => { const tr = e.target.closest('tr[data-k]'); if (!tr) return; state.sel = tr.dataset.k; renderHeat(); });
+  $('heat').addEventListener('keydown', e => { if (e.key !== 'Enter') return; const tr = e.target.closest('tr[data-k]'); if (tr) { state.sel = tr.dataset.k; renderHeat(); } });
+  renderAll(); renderHeat(); renderRegime(); renderForecast();
+  const links = [...document.querySelectorAll('.nav a')];
+  const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) links.forEach(l => l.classList.toggle('on', l.getAttribute('href') === '#' + en.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+  document.querySelectorAll('section.block').forEach(s => io.observe(s));
+  let rw = null; addEventListener('resize', () => { clearTimeout(rw); rw = setTimeout(() => { renderAll(); renderRegime(); }, 150); });
+}
+window.__HL = { simulate, stats, idx, CORE, SIXTY };
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
