@@ -30,6 +30,11 @@ def main():
     p.add_argument("--industries", type=int, default=12, choices=[12, 17])
     p.add_argument("--oos-start", default=None)
     p.add_argument("--confirm", type=int, default=None, help="months a new regime must persist")
+    p.add_argument("--sample-start", default=None, help="first return month, e.g. 1982-01")
+    p.add_argument("--cost-mult", type=float, default=1.0, help="multiply all transaction costs")
+    p.add_argument("--gold-avg", action="store_true",
+                   help="ignore data/gold_override.csv and use World Bank monthly-average gold")
+    p.add_argument("--bootstrap", type=int, default=5000, help="block-bootstrap resamples (0 = skip)")
     p.add_argument("--out", default="results")
     args = p.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
@@ -39,6 +44,10 @@ def main():
         cfg.oos_start = args.oos_start
     if args.confirm:
         cfg.confirm_months = args.confirm
+    if args.sample_start:
+        cfg.sample_start = args.sample_start
+    if args.cost_mult != 1.0:
+        cfg.cost_bps = {k: v * args.cost_mult for k, v in cfg.cost_bps.items()}
 
     if args.synthetic:
         from synthetic import write_synthetic
@@ -53,7 +62,8 @@ def main():
     out = ROOT / args.out
     out.mkdir(parents=True, exist_ok=True)
 
-    raw = load_raw(raw_dir, cfg.industries, refresh=args.refresh and not args.synthetic)
+    raw = load_raw(raw_dir, cfg.industries, refresh=args.refresh and not args.synthetic,
+                   use_gold_override=not args.gold_avg)
     panels = build_panels(raw)
     rets, inds = panels["returns"], panels["industries"]
     rets = rets.loc[cfg.sample_start:]
@@ -102,6 +112,19 @@ def main():
     ann = lambda s: (1 + s).prod() ** (12 / len(s)) - 1
     regime_value = ann(port["Regime Tilt"]) - ann(port["Uncond. Tilt"])
     detection_cost = ann(port["Oracle Tilt"]) - ann(port["Regime Tilt"])
+
+    pd.DataFrame({
+        "value": {"regime_value_ann": regime_value, "detection_cost_ann": detection_cost,
+                  "sample_start": str(rets.index[0]), "sample_end": str(rets.index[-1]),
+                  "oos_start": cfg.oos_start, "industries": cfg.industries,
+                  "confirm_months": cfg.confirm_months, "cost_bps": str(cfg.cost_bps),
+                  "gold_source": panels["gold_source"]}}).to_csv(out / "headline.csv")
+    rf.loc[port.index].to_csv(out / "rf.csv")
+
+    if args.bootstrap > 0:
+        from significance import significance_table
+        sig = significance_table(port, rf.loc[port.index], n_boot=args.bootstrap)
+        sig.to_csv(out / "significance.csv", index=False)
 
     A.plot_wealth(port, out / "oos_performance.png")
     A.plot_weights(_group_weights(weights["Regime Tilt"], inds), regimes, out / "weights_regime_tilt.png",

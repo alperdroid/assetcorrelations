@@ -137,7 +137,7 @@ def _to_monthly_period(s: pd.Series, how: str = "last") -> pd.Series:
     return g.last() if how == "last" else g.mean()
 
 
-def load_raw(raw_dir: Path, industries: int = 12, refresh: bool = False) -> dict:
+def load_raw(raw_dir: Path, industries: int = 12, refresh: bool = False, use_gold_override: bool = True) -> dict:
     raw_dir.mkdir(parents=True, exist_ok=True)
     ind_key = f"ind{industries}"
     raw = {}
@@ -147,7 +147,7 @@ def load_raw(raw_dir: Path, industries: int = 12, refresh: bool = False) -> dict
     for name, sid in FRED_SERIES.items():
         raw[name] = parse_fred_csv(_fetch(FRED_URL.format(sid), raw_dir / f"fred_{sid}.csv", refresh))
     override = raw_dir.parent / "gold_override.csv"
-    if override.exists():
+    if use_gold_override and override.exists():
         log.info("Using end-of-month gold override: %s", override)
         raw["GOLD"] = parse_gold_csv(override.read_bytes())
         raw["gold_source"] = "override (end-of-month)"

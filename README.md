@@ -14,7 +14,12 @@ python run_study.py              # downloads data to data/raw/, writes results/
 ```
 
 Options: `--refresh` (re-download), `--industries 17`, `--oos-start 2000-01`,
-`--confirm 2` (regime must persist 2 months before switching), `--out results_x`.
+`--confirm 2` (regime must persist 2 months before switching), `--sample-start 1982-01`,
+`--cost-mult 2` (scale all transaction costs), `--gold-avg` (ignore `data/gold_override.csv`),
+`--bootstrap 5000` (block-bootstrap resamples for `significance.csv`; 0 skips), `--out results_x`.
+`./run_all.sh` runs data validation, the main run and every robustness run, then
+`summarize_runs.py`. `python -m pytest tests` runs the no-look-ahead tests (offline).
+Changes affecting results are logged in `DEVIATIONS.md`.
 `python run_study.py --synthetic` runs an offline smoke test on fake data (results meaningless).
 
 ## Data (all free)
@@ -106,4 +111,6 @@ Two headline decompositions:
 
 `config.py` settings · `data.py` downloads and parsing · `regimes.py` signals ·
 `portfolio.py` allocation and walk-forward backtest · `analysis.py` tables, charts, report ·
-`run_study.py` entry point · `synthetic.py` offline test data
+`run_study.py` entry point · `synthetic.py` offline test data · `significance.py` block bootstrap ·
+`validate_data.py` input checks · `fetch_gold_bundesbank.py` month-end gold · `summarize_runs.py`
+robustness table · `tests/` timing tests
